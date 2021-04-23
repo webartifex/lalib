@@ -46,9 +46,21 @@ To execute all sessions that the CI server would run, invoke:
 
 `poetry run nox`
 
+
+#### Code Formatting & Linting
+
+We follow [Google's Python Style Guide](https://google.github.io/styleguide/pyguide.html).
+
 During development, `poetry run nox -s format` and `poetry run nox -s lint` may
     be helpful.
-Both re-use a previous environment with the `-r` flag.
+Both re-use a previously created environment with the `-r` flag.
+
+The first task formats all source code files with
+    [autoflake](https://pypi.org/project/autoflake/),
+    [black](https://pypi.org/project/black/), and
+    [isort](https://pypi.org/project/isort/).
+`black` uses its default settings
+except that it keeps single quotes `'` unchanged to minimize visual noise.
 
 
 ### Branching Strategy

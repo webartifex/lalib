@@ -1,6 +1,12 @@
-"""Configure nox to run maintenance tasks in isolated environments."""
+"""Configure nox to run maintenance tasks in isolated environments.
+
+For local development, use the following sessions:
+    - "format" => run autoflake, black, and isort to format the code nicely
+"""
 
 import os
+import tempfile
+from typing import Any
 
 import nox
 from nox import sessions
@@ -33,8 +39,31 @@ nox.options.sessions = (
 
 @nox.session(name='format', python=MAIN_PYTHON)
 def format_(session: sessions.Session):
-    """Format the source files."""
+    """Format the source files with autoflake, black, and isort."""
     _info(session)
+    _install_packages(session, 'autoflake', 'black', 'isort')
+
+    # Interpret extra arguments as locations of source files.
+    locations = session.posargs or SRC_LOCATIONS
+
+    session.run('autoflake', '--version')
+    session.run(
+        'autoflake',
+        '--in-place',
+        '--recursive',
+        '--expand-star-imports',
+        '--remove-all-unused-imports',
+        '--ignore-init-module-imports',  # modifies --remove-all-unused-imports
+        '--remove-duplicate-keys',
+        '--remove-unused-variables',
+        *locations,
+    )
+
+    session.run('black', '--version')
+    session.run('black', *locations)
+
+    session.run('isort', '--version')
+    session.run('isort', *locations)
 
 
 @nox.session(python=MAIN_PYTHON)
@@ -59,3 +88,46 @@ def _info(session: sessions.Session) -> None:
     # Fake GNU's pwd.
     session.log('pwd')
     print(os.getcwd())
+
+
+def _install_packages(
+    session: sessions.Session, *packages_or_pip_args: str, **kwargs: Any
+) -> None:
+    """Install packages respecting the "poetry.lock" file.
+
+    This function wraps nox.sessions.Session.install() such that it installs
+    packages respecting the pinned versions specified in poetry's lock file.
+    This makes nox sessions more deterministic.
+
+    IMPORTANT: Package installation is skipped if the `session` is run with
+    the "-r" flag to re-use an existing virtual environment. That turns nox
+    into a fast task runner provided that a virtual environment already exists.
+
+    Args:
+        session: the Session object
+        *packages_or_pip_args: the packages to be installed or pip options
+        **kwargs: passed on to `nox.sessions.Session.install()`
+    """
+    if session.virtualenv.reuse_existing:
+        session.log(
+            'No dependencies are installed as an existing environment is re-used',
+        )
+        return
+
+    session.log('Dependencies are installed respecting the poetry.lock file')
+
+    with tempfile.NamedTemporaryFile() as requirements_txt:
+        session.run(
+            'poetry',
+            'export',
+            '--dev',
+            '--format=requirements.txt',
+            f'--output={requirements_txt.name}',
+            '--without-hashes',
+            external=True,
+        )
+        session.install(
+            f'--constraint={requirements_txt.name}',
+            *packages_or_pip_args,
+            **kwargs,
+        )
