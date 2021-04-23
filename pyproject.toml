@@ -25,3 +25,4 @@ repository = "https://github.com/webartifex/lalib"
 python = "^3.8"
 
 [tool.poetry.dev-dependencies]
+nox = "^2020.12.31"

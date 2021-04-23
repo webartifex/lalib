@@ -30,6 +30,27 @@ This automatically creates and uses a
     [virtual environment](https://docs.python.org/3/tutorial/venv.html).
 
 
+### Testing & Maintenance Tasks
+
+We use [nox](https://nox.thea.codes/en/stable/) to run
+the test suite and the maintenance tasks during development
+in isolated environments
+(`nox` is quite similar to [tox](https://tox.readthedocs.io/en/latest/)).
+It is configured in the [noxfile.py](noxfile.py) file.
+
+To list all available tasks, called sessions in `nox`, simply run:
+
+`poetry run nox --list`
+
+To execute all sessions that the CI server would run, invoke:
+
+`poetry run nox`
+
+During development, `poetry run nox -s format` and `poetry run nox -s lint` may
+    be helpful.
+Both re-use a previous environment with the `-r` flag.
+
+
 ### Branching Strategy
 
 The branches in this repository follow the

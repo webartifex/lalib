@@ -1,3 +1,4 @@
+.cache/
 **/*.egg-info/
 .idea/
 .python-version
