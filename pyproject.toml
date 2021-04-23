@@ -43,5 +43,10 @@ flake8 = "^3.9.1"
 flake8-annotations = "^2.6.2"
 flake8-black = "^0.2.1"
 flake8-expression-complexity = "^0.0.9"
+flake8-pytest-style = "^1.4.1"
 mypy = "^0.812"
 wemake-python-styleguide = "^0.15.2"  # flake8 plug-in
+
+# Test Suite
+pytest = "^6.2.3"
+pytest-cov = "^2.11.1"

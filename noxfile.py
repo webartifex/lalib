@@ -3,6 +3,7 @@
 For local development, use the following sessions:
     - "format" => run autoflake, black, and isort to format the code nicely
     - "lint" => run flake8 and mypy to lint the code base
+    - "test-x.y" => run the test suite for Python version x.y
 """
 
 import os
@@ -18,8 +19,11 @@ MAIN_PYTHON = '3.8'
 # Make the project forward compatible.
 SUPPORTED_PYTHONS = (MAIN_PYTHON, '3.9')
 
+# Path to the test suite.
+TESTS_FOLDER = 'tests/'
+
 # Paths with *.py files.
-SRC_LOCATIONS = 'noxfile.py', 'src/'
+SRC_LOCATIONS = ('noxfile.py', 'src/', TESTS_FOLDER)
 
 
 # Use a unified cache folder for all develop tools.
@@ -76,6 +80,7 @@ def lint(session: nox.Session) -> None:
         'flake8-annotations',
         'flake8-black',
         'flake8-expression-complexity',
+        'flake8-pytest-style',
         'mypy',
         'wemake-python-styleguide',
     )
@@ -98,7 +103,28 @@ def lint(session: nox.Session) -> None:
 @nox.session(python=SUPPORTED_PYTHONS)
 def test(session: nox.Session) -> None:
     """Test the code base."""
+    # Re-using an old environment is not deterministic here as
+    # `poetry install --no-dev` removes previously installed packages.
+    if session.virtualenv.reuse_existing:
+        raise RuntimeError('The "test-*" sessions must be run without the "-r" option')
+
     _show_info(session)
+
+    # Install only the `lalib` package and the testing tool chain.
+    session.run('poetry', 'install', '--no-dev', external=True)
+    _install_packages(session, 'packaging', 'pytest', 'pytest-cov')
+
+    # Interpret extra arguments as options for pytest.
+    args = session.posargs or (
+        '--cov',
+        '--no-cov-on-fail',
+        '--cov-branch',
+        '--cov-fail-under=100',
+        '--cov-report=term-missing:skip-covered',
+        TESTS_FOLDER,
+    )
+
+    session.run('pytest', *args)
 
 
 def _show_info(session: nox.Session) -> None:

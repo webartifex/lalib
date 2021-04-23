@@ -46,6 +46,8 @@ To execute all sessions that the CI server would run, invoke:
 
 `poetry run nox`
 
+That includes running the test suite for all supported Python versions.
+
 
 #### Code Formatting & Linting
 
