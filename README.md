@@ -49,7 +49,8 @@ To execute all sessions that the CI server would run, invoke:
 
 #### Code Formatting & Linting
 
-We follow [Google's Python Style Guide](https://google.github.io/styleguide/pyguide.html).
+We follow [Google's Python Style Guide](https://google.github.io/styleguide/pyguide.html)
+and include [type hints](https://docs.python.org/3/library/typing.html) where possible.
 
 During development, `poetry run nox -s format` and `poetry run nox -s lint` may
     be helpful.
@@ -61,6 +62,12 @@ The first task formats all source code files with
     [isort](https://pypi.org/project/isort/).
 `black` uses its default settings
 except that it keeps single quotes `'` unchanged to minimize visual noise.
+
+The second task lints all source code files with
+    [flake8](https://pypi.org/project/flake8/) and
+    [mypy](https://pypi.org/project/mypy/).
+`flake8` is configured with a couple of plug-ins,
+most notably [wemake-python-styleguide](https://wemake-python-stylegui.de/en/latest/).
 
 
 ### Branching Strategy
