@@ -48,5 +48,6 @@ mypy = "^0.812"
 wemake-python-styleguide = "^0.15.2"  # flake8 plug-in
 
 # Test Suite
+packaging = "^20.9"  # used to test the packaged version
 pytest = "^6.2.3"
 pytest-cov = "^2.11.1"

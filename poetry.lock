@@ -790,7 +790,7 @@ typing_extensions = ">=3.6,<4.0"
 [metadata]
 lock-version = "1.1"
 python-versions = "^3.8"
-content-hash = "923f6b90e85aa98cc0a1f678d820d884343b66c1c28b88c000ddbb9eef3a8aa5"
+content-hash = "0dea783cfd7e2b80b5109dd41c430232cc6c8d45de8dd44b4aaaa76206807cbb"
 
 [metadata.files]
 appdirs = [
