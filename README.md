@@ -71,6 +71,14 @@ The second task lints all source code files with
 `flake8` is configured with a couple of plug-ins,
 most notably [wemake-python-styleguide](https://wemake-python-stylegui.de/en/latest/).
 
+You may want to install the local [pre-commit](https://pre-commit.com/) hooks
+    that come with the project:
+
+`poetry run nox -s init-project`
+
+Then, the formatting and linting occurs automatically before every commit.
+Also, the test suite is run before every merge.
+
 
 ### Branching Strategy
 

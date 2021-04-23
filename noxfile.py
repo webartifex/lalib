@@ -1,9 +1,16 @@
 """Configure nox to run maintenance tasks in isolated environments.
 
 For local development, use the following sessions:
+    - "init-project" => set up local pre-commit hooks (see below)
     - "format" => run autoflake, black, and isort to format the code nicely
     - "lint" => run flake8 and mypy to lint the code base
     - "test-x.y" => run the test suite for Python version x.y
+
+The `pre-commit` framework invokes the following tasks:
+    - before any commit:
+      + "format" => as above
+      + "lint" => as above
+    - before merges => run the entire "test-suite"
 """
 
 import os
@@ -115,7 +122,10 @@ def test(session: nox.Session) -> None:
     _install_packages(session, 'packaging', 'pytest', 'pytest-cov')
 
     # Interpret extra arguments as options for pytest.
-    args = session.posargs or (
+    # They are "dropped" by the hack in the `test_suite()` function
+    # if this function is run within the "test-suite" session.
+    posargs = () if session.env.get('_drop_posargs') else session.posargs
+    args = posargs or (
         '--cov',
         '--no-cov-on-fail',
         '--cov-branch',
@@ -125,6 +135,47 @@ def test(session: nox.Session) -> None:
     )
 
     session.run('pytest', *args)
+
+
+@nox.session(name='test-suite', python=MAIN_PYTHON)
+def test_suite(session: nox.Session) -> None:
+    """Run the entire test suite.
+
+    Intended to be run as a pre-commit hook!
+
+    Ignores the paths to the staged files passed in by the
+    `pre-commit` framework and executes all tests instead.
+    """
+    # Re-using an old environment is not deterministic here as
+    # `poetry install --no-dev` removes previously installed packages.
+    if session.virtualenv.reuse_existing:
+        raise RuntimeError(
+            'The "test-suite" session must be run without the "-r" option',
+        )
+
+    # Little hack to ignore the extra arguments provided
+    # by the `pre-commit` framework. Create a flag in the
+    # env(ironment) that must contain only `str`-like objects.
+    session.env['_drop_posargs'] = 'true'
+
+    # Cannot use `session.notify()` to trigger the "test" session as
+    # that would create a new `nox.Session` object without the flag in
+    # the environment. Instead, run the `test()` function from here.
+    test(session)
+
+
+@nox.session(name='init-project', python=MAIN_PYTHON, venv_backend='none')
+def init_project(session: nox.Session) -> None:
+    """Install the pre-commit hooks."""
+    for type_ in ('pre-commit', 'pre-merge-commit'):
+        session.run(
+            'poetry',
+            'run',
+            'pre-commit',
+            'install',
+            f'--hook-type={type_}',
+            external=True,
+        )
 
 
 def _show_info(session: nox.Session) -> None:
