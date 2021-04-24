@@ -44,6 +44,7 @@ nox.options.error_on_external_run = True
 nox.options.sessions = (
     'format',
     'lint',
+    'safety',
     *(f'test-{version}' for version in SUPPORTED_PYTHONS),
 )
 
@@ -105,6 +106,32 @@ def lint(session: nox.Session) -> None:
         session.run('mypy', *mypy_locations)
     else:
         session.log('No paths to be checked with mypy')
+
+
+@nox.session(python=MAIN_PYTHON)
+def safety(session: nox.Session) -> None:
+    """Check the dependencies for known security vulnerabilities."""
+    _show_info(session)
+
+    # We do not pin the version of `safety` to always check with the
+    # latest version. The risk of this breaking the CI is rather low.
+    session.install('safety')
+
+    with tempfile.NamedTemporaryFile() as requirements_txt:
+        session.run(
+            'poetry',
+            'export',
+            '--dev',
+            '--format=requirements.txt',
+            f'--output={requirements_txt.name}',
+            external=True,
+        )
+        session.run(
+            'safety',
+            'check',
+            f'--file={requirements_txt.name}',
+            '--full-report',
+        )
 
 
 @nox.session(python=SUPPORTED_PYTHONS)
