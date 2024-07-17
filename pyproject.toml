@@ -5,7 +5,7 @@ build-backend = "poetry.core.masonry.api"
 
 [tool.poetry]
 name = "lalib"
-version = "0.1.0.post0"
+version = "0.1.0.dev0"
 
 authors = [
     "Alexander Hess <alexander@webartifex.biz>",
