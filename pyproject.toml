@@ -1,0 +1,29 @@
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
+
+
+[tool.poetry]
+name = "lalib"
+version = "0.1.0.post0"
+
+authors = [
+    "Alexander Hess <alexander@webartifex.biz>",
+]
+description = "A Python library to study linear algebra"
+keywords = [
+    "python",
+    "educational",
+    "linear-algebra",
+]
+license = "MIT"
+
+readme = "README.md"
+homepage = "https://github.com/webartifex/lalib"
+repository = "https://github.com/webartifex/lalib"
+
+
+[tool.poetry.dependencies]
+python = "^3.9"
+
+[tool.poetry.group.dev.dependencies]
