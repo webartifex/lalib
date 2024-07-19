@@ -1,0 +1,5 @@
+.cache/
+dist/
+**/*.egg-info/
+.python-version
+.venv/
