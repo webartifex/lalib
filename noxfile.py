@@ -76,6 +76,7 @@ nox.options.reuse_venv = "no"
 nox.options.sessions = (  # run by default when invoking `nox` on the CLI
     "format",
     "lint",
+    "test-docstrings",
     f"test-{MAIN_PYTHON}",
 )
 nox.options.stop_on_first_error = True
@@ -156,6 +157,7 @@ def test(session: nox.Session) -> None:
         "pytest",
         "pytest-cov",
         "semver",
+        "xdoctest",
     )
 
     args = session.posargs or (
@@ -165,6 +167,16 @@ def test(session: nox.Session) -> None:
     )
 
     session.run("pytest", *args)
+
+
+@nox_session(name="test-docstrings", python=MAIN_PYTHON)
+def test_docstrings(session: nox.Session) -> None:
+    """Test docstrings with `xdoctest`."""
+    start(session)
+    install_pinned(session, "xdoctest[colors]")
+
+    session.run("xdoctest", "--version")
+    session.run("xdoctest", "src/lalib")
 
 
 def start(session: nox.Session) -> None:

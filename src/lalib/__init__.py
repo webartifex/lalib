@@ -1,4 +1,10 @@
-"""A Python library to study linear algebra."""
+"""A Python library to study linear algebra.
+
+First, verify that your installation of `lalib` works:
+>>> import lalib
+>>> lalib.__version__ != '0.0.0'
+True
+"""
 
 from importlib import metadata
 

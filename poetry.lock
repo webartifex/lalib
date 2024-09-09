@@ -1014,7 +1014,38 @@ files = [
     {file = "typing_extensions-4.12.2.tar.gz", hash = "sha256:1a7ead55c7e559dd4dee8856e3a88b41225abfe1ce8df57b7c13915fe121ffb8"},
 ]
 
+[[package]]
+name = "xdoctest"
+version = "1.2.0"
+description = "A rewrite of the builtin doctest module"
+optional = false
+python-versions = ">=3.8"
+files = [
+    {file = "xdoctest-1.2.0-py3-none-any.whl", hash = "sha256:0f1ecf5939a687bd1fc8deefbff1743c65419cce26dff908f8b84c93fbe486bc"},
+    {file = "xdoctest-1.2.0.tar.gz", hash = "sha256:d8cfca6d8991e488d33f756e600d35b9fdf5efd5c3a249d644efcbbbd2ed5863"},
+]
+
+[package.dependencies]
+colorama = {version = ">=0.4.1", optional = true, markers = "platform_system == \"Windows\" and extra == \"colors\""}
+Pygments = {version = ">=2.4.1", optional = true, markers = "python_version >= \"3.5.0\" and extra == \"colors\""}
+
+[package.extras]
+all = ["IPython (>=7.23.1)", "Pygments (>=2.0.0)", "Pygments (>=2.4.1)", "attrs (>=19.2.0)", "colorama (>=0.4.1)", "debugpy (>=1.0.0)", "debugpy (>=1.3.0)", "debugpy (>=1.6.0)", "ipykernel (>=6.0.0)", "ipykernel (>=6.11.0)", "ipython-genutils (>=0.2.0)", "jedi (>=0.16)", "jinja2 (>=3.0.0)", "jupyter-client (>=7.0.0)", "jupyter-core (>=4.7.0)", "nbconvert (>=6.0.0)", "nbconvert (>=6.1.0)", "pyflakes (>=2.2.0)", "pytest (>=4.6.0)", "pytest (>=6.2.5)", "pytest-cov (>=3.0.0)", "tomli (>=0.2.0)"]
+all-strict = ["IPython (==7.23.1)", "Pygments (==2.0.0)", "Pygments (==2.4.1)", "attrs (==19.2.0)", "colorama (==0.4.1)", "debugpy (==1.0.0)", "debugpy (==1.3.0)", "debugpy (==1.6.0)", "ipykernel (==6.0.0)", "ipykernel (==6.11.0)", "ipython-genutils (==0.2.0)", "jedi (==0.16)", "jinja2 (==3.0.0)", "jupyter-client (==7.0.0)", "jupyter-core (==4.7.0)", "nbconvert (==6.0.0)", "nbconvert (==6.1.0)", "pyflakes (==2.2.0)", "pytest (==4.6.0)", "pytest (==6.2.5)", "pytest-cov (==3.0.0)", "tomli (==0.2.0)"]
+colors = ["Pygments (>=2.0.0)", "Pygments (>=2.4.1)", "colorama (>=0.4.1)"]
+colors-strict = ["Pygments (==2.0.0)", "Pygments (==2.4.1)", "colorama (==0.4.1)"]
+docs = ["Pygments (>=2.9.0)", "myst-parser (>=0.18.0)", "sphinx (>=5.0.1)", "sphinx-autoapi (>=1.8.4)", "sphinx-autobuild (>=2021.3.14)", "sphinx-reredirects (>=0.0.1)", "sphinx-rtd-theme (>=1.0.0)", "sphinxcontrib-napoleon (>=0.7)"]
+docs-strict = ["Pygments (==2.9.0)", "myst-parser (==0.18.0)", "sphinx (==5.0.1)", "sphinx-autoapi (==1.8.4)", "sphinx-autobuild (==2021.3.14)", "sphinx-reredirects (==0.0.1)", "sphinx-rtd-theme (==1.0.0)", "sphinxcontrib-napoleon (==0.7)"]
+jupyter = ["IPython (>=7.23.1)", "attrs (>=19.2.0)", "debugpy (>=1.0.0)", "debugpy (>=1.3.0)", "debugpy (>=1.6.0)", "ipykernel (>=6.0.0)", "ipykernel (>=6.11.0)", "ipython-genutils (>=0.2.0)", "jedi (>=0.16)", "jinja2 (>=3.0.0)", "jupyter-client (>=7.0.0)", "jupyter-core (>=4.7.0)", "nbconvert (>=6.0.0)", "nbconvert (>=6.1.0)"]
+jupyter-strict = ["IPython (==7.23.1)", "attrs (==19.2.0)", "debugpy (==1.0.0)", "debugpy (==1.3.0)", "debugpy (==1.6.0)", "ipykernel (==6.0.0)", "ipykernel (==6.11.0)", "ipython-genutils (==0.2.0)", "jedi (==0.16)", "jinja2 (==3.0.0)", "jupyter-client (==7.0.0)", "jupyter-core (==4.7.0)", "nbconvert (==6.0.0)", "nbconvert (==6.1.0)"]
+optional = ["IPython (>=7.23.1)", "Pygments (>=2.0.0)", "Pygments (>=2.4.1)", "attrs (>=19.2.0)", "colorama (>=0.4.1)", "debugpy (>=1.0.0)", "debugpy (>=1.3.0)", "debugpy (>=1.6.0)", "ipykernel (>=6.0.0)", "ipykernel (>=6.11.0)", "ipython-genutils (>=0.2.0)", "jedi (>=0.16)", "jinja2 (>=3.0.0)", "jupyter-client (>=7.0.0)", "jupyter-core (>=4.7.0)", "nbconvert (>=6.0.0)", "nbconvert (>=6.1.0)", "pyflakes (>=2.2.0)", "tomli (>=0.2.0)"]
+optional-strict = ["IPython (==7.23.1)", "Pygments (==2.0.0)", "Pygments (==2.4.1)", "attrs (==19.2.0)", "colorama (==0.4.1)", "debugpy (==1.0.0)", "debugpy (==1.3.0)", "debugpy (==1.6.0)", "ipykernel (==6.0.0)", "ipykernel (==6.11.0)", "ipython-genutils (==0.2.0)", "jedi (==0.16)", "jinja2 (==3.0.0)", "jupyter-client (==7.0.0)", "jupyter-core (==4.7.0)", "nbconvert (==6.0.0)", "nbconvert (==6.1.0)", "pyflakes (==2.2.0)", "tomli (==0.2.0)"]
+tests = ["pytest (>=4.6.0)", "pytest (>=6.2.5)", "pytest-cov (>=3.0.0)"]
+tests-binary = ["cmake (>=3.21.2)", "cmake (>=3.25.0)", "ninja (>=1.10.2)", "ninja (>=1.11.1)", "pybind11 (>=2.10.3)", "pybind11 (>=2.7.1)", "scikit-build (>=0.11.1)", "scikit-build (>=0.16.1)"]
+tests-binary-strict = ["cmake (==3.21.2)", "cmake (==3.25.0)", "ninja (==1.10.2)", "ninja (==1.11.1)", "pybind11 (==2.10.3)", "pybind11 (==2.7.1)", "scikit-build (==0.11.1)", "scikit-build (==0.16.1)"]
+tests-strict = ["pytest (==4.6.0)", "pytest (==6.2.5)", "pytest-cov (==3.0.0)"]
+
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.9"
-content-hash = "4ba46548b380fe7c34cf4ed48492253b2d3a1866f86c8d8bf569eb18829281c2"
+content-hash = "3648b3426753e3e36e575d6b08fe8ab1b5f5443dcf2d1effaed5e921cdb40933"
