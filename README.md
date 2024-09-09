@@ -45,6 +45,26 @@ To replicate the project maintainer's develop environment, run:
 `poetry install`
 
 
+### Maintenance Tasks
+
+We use [nox](https://nox.thea.codes/en/stable/) to run
+    the test suite and other maintenance tasks during development
+    in isolated environments.
+`nox` is similar to the popular [tox](https://tox.readthedocs.io/en/latest/).
+It is configured in the
+    [noxfile.py](https://github.com/webartifex/lalib/blob/main/noxfile.py) file.
+`nox` is assumed to be installed as well
+    and is therefore not a project dependency.
+
+To list all available tasks, called sessions in `nox`, simply run:
+
+`nox --list` or `nox -l` for short
+
+To execute all default tasks, simply invoke:
+
+`nox`
+
+
 ### Branching Strategy
 
 The branches in this repository follow the
