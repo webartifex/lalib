@@ -69,6 +69,9 @@ To execute all default tasks, simply invoke:
 
 `nox`
 
+This includes running the test suite for the project's main Python version
+    (i.e., [3.12](https://devguide.python.org/versions/)).
+
 
 #### Code Formatting & Linting
 
@@ -91,6 +94,18 @@ The second task lints all source code files with
     [mypy](https://pypi.org/project/mypy/), and
     [ruff](https://pypi.org/project/ruff/).
 `flake8` is configured with a couple of plug-ins.
+
+
+#### Test Suite
+
+We use [pytest](https://docs.pytest.org/en/stable/)
+    to obtain confidence in the correctness of `lalib`.
+To run the tests
+    for *all* supported Python versions
+    in isolated (and perfectly reproducable) environments,
+    invoke:
+
+`nox -s test`
 
 
 ### Branching Strategy

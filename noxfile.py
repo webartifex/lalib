@@ -66,7 +66,8 @@ def load_supported_python_versions(*, reverse: bool = False) -> list[str]:
 SUPPORTED_PYTHONS = load_supported_python_versions(reverse=True)
 MAIN_PYTHON = "3.12"
 
-SRC_LOCATIONS = ("./noxfile.py", "src/")
+TESTS_LOCATION = "tests/"
+SRC_LOCATIONS = ("./noxfile.py", "src/", TESTS_LOCATION)
 
 
 nox.options.envdir = ".cache/nox"
@@ -75,6 +76,7 @@ nox.options.reuse_venv = "no"
 nox.options.sessions = (  # run by default when invoking `nox` on the CLI
     "format",
     "lint",
+    f"test-{MAIN_PYTHON}",
 )
 nox.options.stop_on_first_error = True
 
@@ -123,6 +125,7 @@ def lint(session: nox.Session) -> None:
         "flake8-quotes",
         "flake8-string-format",
         "flake8-pyproject",
+        "flake8-pytest-style",
         "mypy",
         "pep8-naming",  # flake8 plug-in
         "pydoclint[flake8]",
@@ -139,6 +142,28 @@ def lint(session: nox.Session) -> None:
 
     session.run("ruff", "--version")
     session.run("ruff", "check", *locations)
+
+
+@nox_session(python=SUPPORTED_PYTHONS)
+def test(session: nox.Session) -> None:
+    """Test code with `pytest`."""
+    start(session)
+
+    install_unpinned(session, "-e", ".")  # "-e" makes session reuseable
+    install_pinned(
+        session,
+        "pytest",
+        "pytest-cov",
+    )
+
+    args = session.posargs or (
+        "--cov",
+        "--no-cov-on-fail",
+        TESTS_LOCATION,
+    )
+
+    # Code 5 is temporary as long as there are no tests
+    session.run("pytest", *args, success_codes=[0, 5])
 
 
 def start(session: nox.Session) -> None:
@@ -208,6 +233,34 @@ def install_pinned(
             *packages_or_pip_args,
             **kwargs,
         )
+
+
+def install_unpinned(
+    session: nox.Session,
+    *packages_or_pip_args: str,
+    **kwargs: Any,
+) -> None:
+    """Install the latest PyPI versions of packages."""
+    # Same logic to skip package installation as in core nox
+    # See: https://github.com/wntrblm/nox/blob/2024.04.15/nox/sessions.py#L775
+    venv = session._runner.venv  # noqa: SLF001
+    if session._runner.global_config.no_install and venv._reused:  # noqa: SLF001
+        return
+
+    if kwargs.get("silent") is None:
+        kwargs["silent"] = True
+
+    # Cannot use `session.install(...)` here because
+    # with "nox-poetry" installed this leads to an
+    # installation respecting the "poetry.lock" file
+    session.run(
+        "python",
+        "-m",
+        "pip",
+        "install",
+        *packages_or_pip_args,
+        **kwargs,
+    )
 
 
 if MAIN_PYTHON not in SUPPORTED_PYTHONS:

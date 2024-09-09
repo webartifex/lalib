@@ -53,11 +53,15 @@ flake8-isort = "^6.1"
 flake8-quotes = "^3.4"
 flake8-string-format = "^0.3"
 flake8-pyproject = "^1.2"
+flake8-pytest-style = "^2.0"
 mypy = "^1.11"
 pep8-naming = "^0.14"  # flake8 plug-in
 pydoclint = { extras = ["flake8"], version = "^0.5" }
 ruff = "^0.6"
 
+# Test suite
+pytest = "^8.3"
+pytest-cov = "^5.0"
 
 [tool.poetry.urls]
 
@@ -86,6 +90,34 @@ target-version = ["py312", "py311", "py310", "py39"]
 
 
 
+[tool.coverage]
+# Source: https://coverage.readthedocs.io/en/latest/config.html
+
+
+[tool.coverage.paths]
+
+source = ["src/", "*/site-packages/"]
+
+
+[tool.coverage.report]
+
+show_missing = true
+
+skip_covered = true
+skip_empty = true
+
+
+[tool.coverage.run]
+
+data_file = ".cache/coverage/data"
+
+branch = true
+parallel = true
+
+source = ["lalib"]
+
+
+
 [tool.flake8]
 
 select = [
@@ -103,6 +135,7 @@ select = [
     "F",       # pyflakes => basic errors (Source: https://flake8.pycqa.org/en/latest/user/error-codes.html)
     "I",       # flake8-isort => isort would make changes
     "N",       # pep8-naming
+    "PT",      # flake8-pytest-style => enforce a consistent style with pytest
     "Q",       # flake8-quotes => use double quotes everywhere (complying with black)
     "S",       # flake8-bandit => common security issues
     "T10",     # flake8-debugger => no debugger usage
@@ -153,6 +186,22 @@ docstring-convention = "google"
 # Plug-in: flake8-eradicate
 # Source: https://github.com/wemake-services/flake8-eradicate#options
 eradicate-aggressive = true
+
+# Plug-in: flake8-pytest-style
+#
+# Aligned with [tool.ruff.lint.flake8-pytest-style] below
+#
+# Prefer `@pytest.fixture` over `@pytest.fixture()`
+pytest-fixture-no-parentheses = true
+#
+# Prefer `@pytest.mark.foobar` over `@pytest.mark.foobar()`
+pytest-mark-no-parentheses = true
+#
+# Prefer `@pytest.mark.parametrize(['param1', 'param2'], [(1, 2), (3, 4)])`
+# over `@pytest.mark.parametrize(('param1', 'param2'), ([1, 2], [3, 4]))`
+pytest-parametrize-names-type = "list"
+pytest-parametrize-values-row-type = "tuple"
+pytest-parametrize-values-type = "list"
 
 # Plug-in: flake8-quotes
 # Source: https://github.com/zheller/flake8-quotes#configuration
@@ -209,6 +258,16 @@ ignore_missing_imports = true
 
 
 
+[tool.pytest.ini_options]
+# Source: https://docs.pytest.org/en/stable/
+
+cache_dir = ".cache/pytest"
+
+addopts = "--strict-markers"
+console_output_style = "count"
+
+
+
 [tool.ruff]
 # Source: https://docs.astral.sh/ruff/
 
@@ -250,6 +309,7 @@ select = [
     "F",       # pyflakes => basic errors
     "I",       # flake8-isort => isort would make changes
     "N",       # pep8-naming
+    "PT",      # flake8-pytest-style => enforce a consistent style with pytest
     "Q",       # flake8-quotes => use double quotes everywhere
     "S",       # flake8-bandit => common security issues
     "T10",     # flake8-debugger => no debugger usage
@@ -273,6 +333,21 @@ extend-ignore = [  # never check the following codes
     "E203", "E701",  # "E704" and "W503" do not exist for `ruff`
 
 ]
+
+
+[tool.ruff.lint.flake8-pytest-style]  # aligned with [tool.flake8] above
+
+# Prefer `@pytest.fixture` over `@pytest.fixture()`
+fixture-parentheses = false
+
+# Prefer `@pytest.mark.foobar` over `@pytest.mark.foobar()`
+mark-parentheses = false
+
+# Prefer `@pytest.mark.parametrize(['param1', 'param2'], [(1, 2), (3, 4)])`
+# over `@pytest.mark.parametrize(('param1', 'param2'), ([1, 2], [3, 4]))`
+parametrize-names-type = "list"
+parametrize-values-row-type = "tuple"
+parametrize-values-type = "list"
 
 
 [tool.ruff.lint.isort]  # aligned with [tool.isort] above
