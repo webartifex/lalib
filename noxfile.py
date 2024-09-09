@@ -1,6 +1,9 @@
 """Maintenance tasks run in isolated environments."""
 
 import collections
+import pathlib
+import re
+import tempfile
 from collections.abc import Mapping
 from typing import Any
 
@@ -12,6 +15,9 @@ try:
     from nox_poetry import session as nox_session
 except ImportError:
     nox_session = nox.session
+    nox_poetry_available = False
+else:
+    nox_poetry_available = True
 
 
 def nested_defaultdict() -> collections.defaultdict[str, Any]:
@@ -67,8 +73,28 @@ nox.options.envdir = ".cache/nox"
 nox.options.error_on_external_run = True  # only `git` and `poetry` are external
 nox.options.reuse_venv = "no"
 nox.options.sessions = (  # run by default when invoking `nox` on the CLI
+    "format",
 )
 nox.options.stop_on_first_error = True
+
+
+@nox_session(name="format", python=MAIN_PYTHON)
+def format_(session: nox.Session) -> None:
+    """Format source files with `autoflake`, `black`, and `isort`."""
+    start(session)
+
+    install_pinned(session, "autoflake", "black", "isort")
+
+    locations = session.posargs or SRC_LOCATIONS
+
+    session.run("autoflake", "--version")
+    session.run("autoflake", *locations)
+
+    session.run("black", "--version")
+    session.run("black", *locations)
+
+    session.run("isort", "--version-number")
+    session.run("isort", *locations)
 
 
 def start(session: nox.Session) -> None:
@@ -83,8 +109,61 @@ def start(session: nox.Session) -> None:
     session.run("python", "-c", "import os; print(os.getcwd())")
     session.run("python", "-c", 'import os; print(os.environ["PATH"])')
 
+    session.env["BLACK_CACHE_DIR"] = ".cache/black"
     session.env["PIP_CACHE_DIR"] = ".cache/pip"
     session.env["PIP_DISABLE_PIP_VERSION_CHECK"] = "true"
+
+
+def install_pinned(
+    session: nox.Session,
+    *packages_or_pip_args: str,
+    **kwargs: Any,
+) -> None:
+    """Install packages respecting the "poetry.lock" file.
+
+    Wraps `nox.sessions.Session.install()` such that it installs
+    packages respecting the pinned versions specified in poetry's
+    lock file. This makes nox sessions more deterministic.
+    """
+    session.debug("Install packages respecting the poetry.lock file")
+
+    session.run(  # temporary fix to avoid poetry's future warning
+        "poetry",
+        "config",
+        "--local",
+        "warnings.export",
+        "false",
+        external=True,
+        log=False,  # because it's just a fix
+    )
+
+    if nox_poetry_available:
+        session.install(*packages_or_pip_args, **kwargs)
+        return
+
+    with tempfile.NamedTemporaryFile() as requirements_txt:
+        session.run(
+            "poetry",
+            "export",
+            "--format=requirements.txt",
+            f"--output={requirements_txt.name}",
+            "--with=dev",
+            "--without-hashes",
+            external=True,
+        )
+
+        # `pip install --constraint ...` raises an error if the
+        # dependencies in requirements.txt contain "extras"
+        # => Strip "package[extras]==1.2.3" into "package==1.2.3"
+        dependencies = pathlib.Path(requirements_txt.name).read_text().split("\n")
+        dependencies = [re.sub(r"\[.*\]==", "==", dep) for dep in dependencies]
+        pathlib.Path(requirements_txt.name).write_text("\n".join(dependencies))
+
+        session.install(
+            f"--constraint={requirements_txt.name}",
+            *packages_or_pip_args,
+            **kwargs,
+        )
 
 
 if MAIN_PYTHON not in SUPPORTED_PYTHONS:

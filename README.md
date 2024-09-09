@@ -8,6 +8,9 @@ The goal of the `lalib` project is to create
     by reading and writing code.
 
 
+[![Code style: black](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/psf/black)
+
+
 ## Contributing & Development
 
 This project is open for any kind of contribution,
@@ -63,6 +66,21 @@ To list all available tasks, called sessions in `nox`, simply run:
 To execute all default tasks, simply invoke:
 
 `nox`
+
+
+#### Code Formatting
+
+We follow [Google's Python style guide](https://google.github.io/styleguide/pyguide.html).
+
+During development,
+    `nox -s format` may be helpful.
+It can be speed up by re-using a previously created environment
+    with the `-R` flag.
+
+This task formats all source code files with
+    [autoflake](https://pypi.org/project/autoflake/),
+    [black](https://pypi.org/project/black/), and
+    [isort](https://pypi.org/project/isort/).
 
 
 ### Branching Strategy
