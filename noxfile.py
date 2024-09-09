@@ -74,6 +74,7 @@ nox.options.error_on_external_run = True  # only `git` and `poetry` are external
 nox.options.reuse_venv = "no"
 nox.options.sessions = (  # run by default when invoking `nox` on the CLI
     "format",
+    "lint",
 )
 nox.options.stop_on_first_error = True
 
@@ -83,7 +84,7 @@ def format_(session: nox.Session) -> None:
     """Format source files with `autoflake`, `black`, and `isort`."""
     start(session)
 
-    install_pinned(session, "autoflake", "black", "isort")
+    install_pinned(session, "autoflake", "black", "isort", "ruff")
 
     locations = session.posargs or SRC_LOCATIONS
 
@@ -95,6 +96,49 @@ def format_(session: nox.Session) -> None:
 
     session.run("isort", "--version-number")
     session.run("isort", *locations)
+
+    session.run("ruff", "--version")
+    session.run("ruff", "check", "--fix-only", *locations)
+
+
+@nox_session(python=MAIN_PYTHON)
+def lint(session: nox.Session) -> None:
+    """Lint source files with `flake8`, `mypy`, and `ruff`."""
+    start(session)
+
+    install_pinned(
+        session,
+        "flake8",
+        "flake8-annotations",
+        "flake8-bandit",
+        "flake8-black",
+        "flake8-broken-line",
+        "flake8-bugbear",
+        "flake8-commas",
+        "flake8-comprehensions",
+        "flake8-debugger",
+        "flake8-docstrings",
+        "flake8-eradicate",
+        "flake8-isort",
+        "flake8-quotes",
+        "flake8-string-format",
+        "flake8-pyproject",
+        "mypy",
+        "pep8-naming",  # flake8 plug-in
+        "pydoclint[flake8]",
+        "ruff",
+    )
+
+    locations = session.posargs or SRC_LOCATIONS
+
+    session.run("flake8", "--version")
+    session.run("flake8", *locations)
+
+    session.run("mypy", "--version")
+    session.run("mypy", *locations)
+
+    session.run("ruff", "--version")
+    session.run("ruff", "check", *locations)
 
 
 def start(session: nox.Session) -> None:

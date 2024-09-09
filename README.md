@@ -9,6 +9,8 @@ The goal of the `lalib` project is to create
 
 
 [![Code style: black](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/psf/black)
+[![Type checking: mypy](https://www.mypy-lang.org/static/mypy_badge.svg)](https://mypy-lang.org/)
+[![Code linting: ruff](https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/charliermarsh/ruff/main/assets/badge/v2.json)](https://github.com/astral-sh/ruff)
 
 
 ## Contributing & Development
@@ -68,19 +70,27 @@ To execute all default tasks, simply invoke:
 `nox`
 
 
-#### Code Formatting
+#### Code Formatting & Linting
 
-We follow [Google's Python style guide](https://google.github.io/styleguide/pyguide.html).
+We follow [Google's Python style guide](https://google.github.io/styleguide/pyguide.html)
+    and include [type hints](https://docs.python.org/3/library/typing.html)
+    where possible.
 
 During development,
-    `nox -s format` may be helpful.
-It can be speed up by re-using a previously created environment
+    `nox -s format` and `nox -s lint` may be helpful.
+Both can be speed up by re-using a previously created environment
     with the `-R` flag.
 
-This task formats all source code files with
+The first task formats all source code files with
     [autoflake](https://pypi.org/project/autoflake/),
     [black](https://pypi.org/project/black/), and
     [isort](https://pypi.org/project/isort/).
+
+The second task lints all source code files with
+    [flake8](https://pypi.org/project/flake8/),
+    [mypy](https://pypi.org/project/mypy/), and
+    [ruff](https://pypi.org/project/ruff/).
+`flake8` is configured with a couple of plug-ins.
 
 
 ### Branching Strategy

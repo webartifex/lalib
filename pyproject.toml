@@ -37,6 +37,27 @@ autoflake = "^2.3"
 black = "^24.8"
 isort = "^5.13"
 
+# Code linters
+flake8 = "^7.1"
+flake8-annotations = "^3.1"
+flake8-bandit = "^4.1"
+flake8-black = "^0.3"
+flake8-broken-line = "^1.0"
+flake8-bugbear = "^24.8"
+flake8-commas = "^4.0"
+flake8-comprehensions = "^3.15"
+flake8-debugger = "^4.1"
+flake8-docstrings = "^1.7"
+flake8-eradicate = "^1.5"
+flake8-isort = "^6.1"
+flake8-quotes = "^3.4"
+flake8-string-format = "^0.3"
+flake8-pyproject = "^1.2"
+mypy = "^1.11"
+pep8-naming = "^0.14"  # flake8 plug-in
+pydoclint = { extras = ["flake8"], version = "^0.5" }
+ruff = "^0.6"
+
 
 [tool.poetry.urls]
 
@@ -65,7 +86,84 @@ target-version = ["py312", "py311", "py310", "py39"]
 
 
 
-[tool.isort]
+[tool.flake8]
+
+select = [
+
+    # violations also covered by `ruff` below
+
+    "ANN",     # flake8-annotations => enforce type checking for functions
+    "B",       # flake8-bugbear => bugs and design flaws
+    "C4",      # flake8-comprehensions => better comprehensions
+    "C8",      # flake8-commas => better comma placements ("COM" for `ruff`)
+    "C90",     # mccabe => cyclomatic complexity (Source: https://github.com/pycqa/mccabe#plugin-for-flake8)
+    "D",       # flake8-docstrings / pydocstyle => PEP257 compliance
+    "E", "W",  # pycodestyle => PEP8 compliance (Source: https://pycodestyle.pycqa.org/en/latest/intro.html#error-codes)
+    "E800",    # flake8-eradicate / eradicate => no commented out code ("ERA" for `ruff`)
+    "F",       # pyflakes => basic errors (Source: https://flake8.pycqa.org/en/latest/user/error-codes.html)
+    "I",       # flake8-isort => isort would make changes
+    "N",       # pep8-naming
+    "Q",       # flake8-quotes => use double quotes everywhere (complying with black)
+    "S",       # flake8-bandit => common security issues
+    "T10",     # flake8-debugger => no debugger usage
+
+    # violations not covered by `ruff` below
+
+    "BLK",     # flake8-black => complain if black wants to make changes
+    "DOC",     # pydoclint (replaces "darglint") => docstring matches implementation
+    "N400",    # flake8-broken-line => no "\" to end a line
+    "P",       # flake8-string-format => unify usage of `str.format()` ("FMT" in the future)
+
+]
+
+ignore = []
+
+extend-ignore = [  # never check the following codes
+
+    "ANN101", "ANN102",  # `self` and `cls` in methods need no annotation
+
+    "ANN401",  # allow dynamically typed expressions with `typing.Any`
+
+    # Comply with black's style
+    # Sources: https://black.readthedocs.io/en/stable/guides/using_black_with_other_tools.html#pycodestyle
+    "E203", "E701", "E704", "W503",
+
+]
+
+per-file-ignores = [
+
+]
+
+# Explicitly set mccabe's maximum complexity to 10 as recommended by
+# Thomas McCabe, the inventor of the McCabe complexity, and the NIST
+# Source: https://en.wikipedia.org/wiki/Cyclomatic_complexity#Limiting_complexity_during_development
+max-complexity = 10
+
+# Whereas black and isort break the line at 88 characters,
+# make flake8 not complain about anything (e.g., comments) until 100
+max-line-length = 99
+
+# Preview the code lines that cause errors
+show-source = true
+
+# Plug-in: flake8-docstrings
+# Source: https://www.pydocstyle.org/en/latest/error_codes.html#default-conventions
+docstring-convention = "google"
+
+# Plug-in: flake8-eradicate
+# Source: https://github.com/wemake-services/flake8-eradicate#options
+eradicate-aggressive = true
+
+# Plug-in: flake8-quotes
+# Source: https://github.com/zheller/flake8-quotes#configuration
+avoid-escape = true
+docstring-quotes = "double"
+inline-quotes = "double"
+multiline-quotes = "double"
+
+
+
+[tool.isort]  # aligned with [tool.ruff.lint.isort] below
 # Source: https://pycqa.github.io/isort/docs/configuration/options.html
 
 known_first_party = ["lalib"]
@@ -92,6 +190,114 @@ use_parentheses = true
 # Source: https://google.github.io/styleguide/pyguide.html#313-imports-formatting
 force_single_line = true
 single_line_exclusions = ["collections.abc", "typing"]
+
+
+
+[tool.mypy]
+# Source: https://mypy.readthedocs.io/en/latest/config_file.html
+
+cache_dir = ".cache/mypy"
+
+
+[[tool.mypy.overrides]]
+
+module = [
+    "nox",
+    "nox_poetry",
+]
+ignore_missing_imports = true
+
+
+
+[tool.ruff]
+# Source: https://docs.astral.sh/ruff/
+
+cache-dir = ".cache/ruff"
+
+target-version = "py39"  # minimum supported Python version
+
+indent-width = 4
+line-length = 88
+
+
+[tool.ruff.format]
+
+# Align with black
+indent-style = "space"
+line-ending = "lf"
+quote-style = "double"
+skip-magic-trailing-comma = false
+
+# Format docstrings as well
+docstring-code-format = true
+docstring-code-line-length = "dynamic"
+
+
+[tool.ruff.lint]  # aligned with [tool.flake8] above
+
+select = [
+
+    # violations also covered by `flake8` above
+
+    "ANN",     # flake8-annotations => enforce type checking for functions
+    "B",       # flake8-bugbear => bugs and design flaws
+    "C4",      # flake8-comprehensions => better comprehensions
+    "C90",     # mccabe => cyclomatic complexity
+    "COM",     # "C8" for flake8-commas => better comma placements
+    "D",       # flake8-docstrings / pydocstyle => PEP257 compliance
+    "E", "W",  # pycodestyle => PEP8 compliance
+    "ERA",     # "E800" for flake8-eradicate / eradicate => no commented out code
+    "F",       # pyflakes => basic errors
+    "I",       # flake8-isort => isort would make changes
+    "N",       # pep8-naming
+    "Q",       # flake8-quotes => use double quotes everywhere
+    "S",       # flake8-bandit => common security issues
+    "T10",     # flake8-debugger => no debugger usage
+
+    # violations not covered by `flake8` above
+
+    "T20",     # flake8-print => forbid `[p]print`
+
+]
+
+ignore = []
+
+extend-ignore = [  # never check the following codes
+
+    "ANN101", "ANN102",  # `self` and `cls` in methods need no annotation
+
+    "ANN401",  # allow dynamically typed expressions with `typing.Any`
+
+    # Comply with black's style
+    # Sources: https://black.readthedocs.io/en/stable/guides/using_black_with_other_tools.html#pycodestyle
+    "E203", "E701",  # "E704" and "W503" do not exist for `ruff`
+
+]
+
+
+[tool.ruff.lint.isort]  # aligned with [tool.isort] above
+
+case-sensitive = true
+force-single-line = true
+single-line-exclusions = ["collections.abc", "typing"]
+lines-after-imports = 2
+split-on-trailing-comma = true
+known-first-party = ["lalib"]
+
+
+[tool.ruff.lint.per-file-ignores]
+
+
+
+[tool.ruff.lint.pycodestyle]
+
+max-doc-length = 72
+max-line-length = 99
+
+
+[tool.ruff.lint.pydocstyle]
+
+convention = "google"
 
 
 
