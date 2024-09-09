@@ -1,1 +1,19 @@
 """A Python library to study linear algebra."""
+
+from importlib import metadata
+
+
+try:
+    pkg_info = metadata.metadata(__name__)
+
+except metadata.PackageNotFoundError:
+    __pkg_name__ = "unknown"
+    __version__ = "unknown"
+
+else:
+    __pkg_name__ = pkg_info["name"]
+    __version__ = pkg_info["version"]
+    del pkg_info
+
+
+del metadata

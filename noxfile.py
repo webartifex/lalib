@@ -152,8 +152,10 @@ def test(session: nox.Session) -> None:
     install_unpinned(session, "-e", ".")  # "-e" makes session reuseable
     install_pinned(
         session,
+        "packaging",
         "pytest",
         "pytest-cov",
+        "semver",
     )
 
     args = session.posargs or (
@@ -162,8 +164,7 @@ def test(session: nox.Session) -> None:
         TESTS_LOCATION,
     )
 
-    # Code 5 is temporary as long as there are no tests
-    session.run("pytest", *args, success_codes=[0, 5])
+    session.run("pytest", *args)
 
 
 def start(session: nox.Session) -> None:

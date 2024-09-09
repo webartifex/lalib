@@ -60,8 +60,11 @@ pydoclint = { extras = ["flake8"], version = "^0.5" }
 ruff = "^0.6"
 
 # Test suite
+packaging = "^24.1"  # to test the version identifier
 pytest = "^8.3"
 pytest-cov = "^5.0"
+semver = "^3.0"  # to test the version identifier
+tomli = [ { python = "<3.11", version = "^2.0" } ]
 
 [tool.poetry.urls]
 
@@ -165,6 +168,11 @@ extend-ignore = [  # never check the following codes
 
 per-file-ignores = [
 
+    # Linting rules for the test suite:
+    # - type hints are not required
+    # - `assert`s are normal
+    "tests/*.py:ANN,S101",
+
 ]
 
 # Explicitly set mccabe's maximum complexity to 10 as recommended by
@@ -253,6 +261,9 @@ cache_dir = ".cache/mypy"
 module = [
     "nox",
     "nox_poetry",
+    "pytest",
+    "semver",
+    "tomli",
 ]
 ignore_missing_imports = true
 
@@ -362,6 +373,11 @@ known-first-party = ["lalib"]
 
 [tool.ruff.lint.per-file-ignores]
 
+"tests/*.py" = [  # Linting rules for the test suite:
+    "ANN",        # - type hints are not required
+    "S101",       # - `assert`s are normal
+    "W505",       # - docstrings may be longer than 72 characters
+]
 
 
 [tool.ruff.lint.pycodestyle]

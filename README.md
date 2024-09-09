@@ -119,3 +119,14 @@ Whereas a rebase makes a simple fast-forward merge possible,
     all merges are made with explicit and *empty* merge commits.
 This ensures that past branches remain visible in the logs,
     for example, with `git log --graph`.
+
+
+#### Versioning
+
+The version identifiers adhere to a subset of the rules in
+    [PEP440](https://peps.python.org/pep-0440/) and
+    follow [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
+So, releases to [PyPI](https://pypi.org/)
+    come in the popular `major.minor.patch` format.
+The specific rules for this project are explained
+    [here](https://github.com/webartifex/lalib/blob/main/tests/test_version.py).
