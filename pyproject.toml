@@ -60,6 +60,7 @@ pydoclint = { extras = ["flake8"], version = "^0.5" }
 ruff = "^0.6"
 
 # Test suite
+coverage = "^7.6"
 packaging = "^24.1"  # to test the version identifier
 pytest = "^8.3"
 pytest-cov = "^5.0"

@@ -2,6 +2,7 @@
 
 import collections
 import pathlib
+import random
 import re
 import tempfile
 from collections.abc import Mapping
@@ -145,20 +146,22 @@ def lint(session: nox.Session) -> None:
     session.run("ruff", "check", *locations)
 
 
+TEST_DEPENDENCIES = (
+    "packaging",
+    "pytest",
+    "pytest-cov",
+    "semver",
+    "xdoctest",
+)
+
+
 @nox_session(python=SUPPORTED_PYTHONS)
 def test(session: nox.Session) -> None:
     """Test code with `pytest`."""
     start(session)
 
     install_unpinned(session, "-e", ".")  # "-e" makes session reuseable
-    install_pinned(
-        session,
-        "packaging",
-        "pytest",
-        "pytest-cov",
-        "semver",
-        "xdoctest",
-    )
+    install_pinned(session, *TEST_DEPENDENCIES)
 
     args = session.posargs or (
         "--cov",
@@ -169,6 +172,58 @@ def test(session: nox.Session) -> None:
     session.run("pytest", *args)
 
 
+_magic_number = random.randint(0, 987654321)  # noqa: S311
+
+
+@nox_session(name="test-coverage", python=MAIN_PYTHON, reuse_venv=True)
+def test_coverage(session: nox.Session) -> None:
+    """Report the combined coverage statistics.
+
+    Run the test suite for all supported Python versions
+    and combine the coverage statistics.
+    """
+    install_pinned(session, "coverage")
+
+    session.run("python", "-m", "coverage", "erase")
+
+    for version in SUPPORTED_PYTHONS:
+        session.notify(f"_test-coverage-run-{version}", (_magic_number,))
+    session.notify("_test-coverage-report", (_magic_number,))
+
+
+@nox_session(name="_test-coverage-run", python=SUPPORTED_PYTHONS, reuse_venv=False)
+def test_coverage_run(session: nox.Session) -> None:
+    """Measure the test coverage."""
+    do_not_reuse(session)
+    do_not_run_directly(session)
+
+    start(session)
+
+    session.install(".")
+    install_pinned(session, "coverage", *TEST_DEPENDENCIES)
+
+    session.run(
+        "python",
+        "-m",
+        "coverage",
+        "run",
+        "-m",
+        "pytest",
+        TESTS_LOCATION,
+    )
+
+
+@nox_session(name="_test-coverage-report", python=MAIN_PYTHON, reuse_venv=True)
+def test_coverage_report(session: nox.Session) -> None:
+    """Report the combined coverage statistics."""
+    do_not_run_directly(session)
+
+    install_pinned(session, "coverage")
+
+    session.run("python", "-m", "coverage", "combine")
+    session.run("python", "-m", "coverage", "report", "--fail-under=100")
+
+
 @nox_session(name="test-docstrings", python=MAIN_PYTHON)
 def test_docstrings(session: nox.Session) -> None:
     """Test docstrings with `xdoctest`."""
@@ -177,6 +232,21 @@ def test_docstrings(session: nox.Session) -> None:
 
     session.run("xdoctest", "--version")
     session.run("xdoctest", "src/lalib")
+
+
+def do_not_reuse(session: nox.Session, *, raise_error: bool = True) -> None:
+    """Do not reuse a session with the "-r" flag."""
+    if session._runner.venv._reused:  # noqa:SLF001
+        if raise_error:
+            session.error('The session must be run without the "-r" flag')
+        else:
+            session.warn('The session must be run without the "-r" flag')
+
+
+def do_not_run_directly(session: nox.Session) -> None:
+    """Do not run a session with `nox -s SESSION_NAME` directly."""
+    if not session.posargs or session.posargs[0] != _magic_number:
+        session.error("This session must not be run directly")
 
 
 def start(session: nox.Session) -> None:

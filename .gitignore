@@ -1,4 +1,5 @@
 .cache/
+dist/
 poetry.toml
 **/__pycache__/
 .venv/
