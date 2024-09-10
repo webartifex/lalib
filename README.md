@@ -8,6 +8,7 @@ The goal of the `lalib` project is to create
     by reading and writing code.
 
 
+[![Test suite: Status](https://github.com/webartifex/lalib/actions/workflows/tests.yml/badge.svg)](https://github.com/webartifex/lalib/actions/workflows/tests.yml)
 [![Code style: black](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/psf/black)
 [![Type checking: mypy](https://www.mypy-lang.org/static/mypy_badge.svg)](https://mypy-lang.org/)
 [![Code linting: ruff](https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/charliermarsh/ruff/main/assets/badge/v2.json)](https://github.com/astral-sh/ruff)
