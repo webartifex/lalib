@@ -8,12 +8,28 @@ The goal of the `lalib` project is to create
     by reading and writing code.
 
 
+[![PyPI: Package version](https://img.shields.io/pypi/v/lalib?color=blue)](https://pypi.org/project/lalib/)
+[![PyPI: Supported Python versions](https://img.shields.io/pypi/pyversions/lalib)](https://pypi.org/project/lalib/)
+[![PyPI: Number of monthly downloads](https://img.shields.io/pypi/dm/lalib)](https://pypistats.org/packages/lalib)
+
 [![Documentation: Status](https://readthedocs.org/projects/lalib/badge/?version=latest)](https://lalib.readthedocs.io/en/latest/?badge=latest)
 [![Test suite: Status](https://github.com/webartifex/lalib/actions/workflows/tests.yml/badge.svg)](https://github.com/webartifex/lalib/actions/workflows/tests.yml)
 [![Test coverage: codecov](https://codecov.io/github/webartifex/lalib/graph/badge.svg?token=J4LWOMVP0R)](https://codecov.io/github/webartifex/lalib)
 [![Code style: black](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/psf/black)
 [![Type checking: mypy](https://www.mypy-lang.org/static/mypy_badge.svg)](https://mypy-lang.org/)
 [![Code linting: ruff](https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/charliermarsh/ruff/main/assets/badge/v2.json)](https://github.com/astral-sh/ruff)
+
+
+## Installation
+
+This project is published on [PyPI](https://pypi.org/project/lalib/).
+To install it, open any Python prompt and type:
+
+`pip install lalib`
+
+You may want to do so
+    within a [virtual environment](https://docs.python.org/3/library/venv.html)
+    or a [Jupyter notebook](https://docs.jupyter.org/en/latest/#what-is-a-notebook).
 
 
 ## Contributing & Development
@@ -136,7 +152,7 @@ This ensures that past branches remain visible in the logs,
 The version identifiers adhere to a subset of the rules in
     [PEP440](https://peps.python.org/pep-0440/) and
     follow [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
-So, releases to [PyPI](https://pypi.org/)
+So, releases to [PyPI](https://pypi.org/project/lalib/#history)
     come in the popular `major.minor.patch` format.
 The specific rules for this project are explained
     [here](https://github.com/webartifex/lalib/blob/main/tests/test_version.py).

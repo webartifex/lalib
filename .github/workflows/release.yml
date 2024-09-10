@@ -1,0 +1,33 @@
+name: release
+on:
+  release:
+    types: [published]
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    name: release-to-pypi
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          # Make all of the below versions available simultaneously
+          python-version: |
+            3.9
+            3.10
+            3.11
+            3.12
+          architecture: x64
+
+      - run: python --version
+      - run: pip --version
+
+      # The following pinned dependencies must be updated manually
+      - run: pip install nox==2024.4.15
+      - run: pip install poetry==1.8.3
+
+      # Run some CI tasks before to ensure code/docs are still good;
+      # the "test" session is run once for every Pyhthon version above
+      - run: nox -s audit docs lint test test-docstrings
+
+      - run: poetry build
+      - run: poetry publish --username=__token__ --password=${{ secrets.PYPI_TOKEN }}
