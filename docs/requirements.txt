@@ -1,0 +1,3 @@
+# The following pinned dependencies must be updated manually
+sphinx==8.0.2
+sphinx-autodoc-typehints==2.3.0

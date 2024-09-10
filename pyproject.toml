@@ -21,6 +21,7 @@ description = "A Python library to study linear algebra"
 license = "MIT"
 readme = "README.md"
 
+documentation = "https://lalib.readthedocs.io"
 homepage = "https://github.com/webartifex/lalib"
 repository = "https://github.com/webartifex/lalib"
 

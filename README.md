@@ -8,6 +8,7 @@ The goal of the `lalib` project is to create
     by reading and writing code.
 
 
+[![Documentation: Status](https://readthedocs.org/projects/lalib/badge/?version=latest)](https://lalib.readthedocs.io/en/latest/?badge=latest)
 [![Test suite: Status](https://github.com/webartifex/lalib/actions/workflows/tests.yml/badge.svg)](https://github.com/webartifex/lalib/actions/workflows/tests.yml)
 [![Test coverage: codecov](https://codecov.io/github/webartifex/lalib/graph/badge.svg?token=J4LWOMVP0R)](https://codecov.io/github/webartifex/lalib)
 [![Code style: black](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/psf/black)
