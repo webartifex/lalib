@@ -1,0 +1,21 @@
+name: docs
+on: push
+jobs:
+  docs:
+    runs-on: ubuntu-latest
+    name: docs
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: 3.12
+          architecture: x64
+
+      - run: python --version
+      - run: pip --version
+
+      # The following pinned dependencies must be updated manually
+      - run: pip install nox==2024.4.15
+      - run: pip install poetry==1.8.3
+
+      - run: nox -s docs
