@@ -77,10 +77,78 @@ nox.options.reuse_venv = "no"
 nox.options.sessions = (  # run by default when invoking `nox` on the CLI
     "format",
     "lint",
+    "audit",
     "test-docstrings",
     f"test-{MAIN_PYTHON}",
 )
 nox.options.stop_on_first_error = True
+
+
+@nox_session(name="audit", python=MAIN_PYTHON, reuse_venv=False)
+def audit_pinned_dependencies(session: nox.Session) -> None:
+    """Check dependencies for vulnerabilities with `pip-audit`.
+
+    The dependencies are those defined in the "poetry.lock" file.
+
+    `pip-audit` uses the Python Packaging Advisory Database
+    (Source: https://github.com/pypa/advisory-database).
+    """
+    do_not_reuse(session)
+    start(session)
+
+    install_unpinned(session, "pip-audit")
+
+    session.run("pip-audit", "--version")
+    suppress_poetry_export_warning(session)
+    with tempfile.NamedTemporaryFile() as requirements_txt:
+        session.run(
+            "poetry",
+            "export",
+            "--format=requirements.txt",
+            f"--output={requirements_txt.name}",
+            "--with=dev",
+            external=True,
+        )
+        session.run(
+            "pip-audit",
+            f"--requirement={requirements_txt.name}",
+            "--local",
+            "--progress-spinner=off",
+            "--strict",
+        )
+
+
+@nox_session(name="audit-updates", python=MAIN_PYTHON, reuse_venv=False)
+def audit_unpinned_dependencies(session: nox.Session) -> None:
+    """Check updates for dependencies with `pip-audit`.
+
+    Convenience task to check dependencies before updating
+    them in the "poetry.lock" file.
+
+    Uses `pip` to resolve the dependencies declared in the
+    "pyproject.toml" file (incl. the "dev" group) to their
+    latest PyPI version.
+    """
+    do_not_reuse(session)
+    start(session)
+
+    pyproject = load_pyproject_toml()
+    poetry_config = pyproject["tool"]["poetry"]
+
+    dependencies = {
+        *(poetry_config["dependencies"].keys()),
+        *(poetry_config["group"]["dev"]["dependencies"].keys()),
+    }
+    dependencies.discard("python")  # Python itself cannot be installed f>
+
+    install_unpinned(session, "pip-audit", *sorted(dependencies))
+    session.run("pip-audit", "--version")
+    session.run(
+        "pip-audit",
+        "--local",
+        "--progress-spinner=off",
+        "--strict",
+    )
 
 
 @nox_session(name="format", python=MAIN_PYTHON)
@@ -266,6 +334,22 @@ def start(session: nox.Session) -> None:
     session.env["PIP_DISABLE_PIP_VERSION_CHECK"] = "true"
 
 
+def suppress_poetry_export_warning(session: nox.Session) -> None:
+    """Temporary fix to avoid poetry's warning ...
+
+    ... about "poetry-plugin-export not being installed in the future".
+    """
+    session.run(
+        "poetry",
+        "config",
+        "--local",
+        "warnings.export",
+        "false",
+        external=True,
+        log=False,  # because it's just a fix we don't want any message in the logs
+    )
+
+
 def install_pinned(
     session: nox.Session,
     *packages_or_pip_args: str,
@@ -279,15 +363,7 @@ def install_pinned(
     """
     session.debug("Install packages respecting the poetry.lock file")
 
-    session.run(  # temporary fix to avoid poetry's future warning
-        "poetry",
-        "config",
-        "--local",
-        "warnings.export",
-        "false",
-        external=True,
-        log=False,  # because it's just a fix
-    )
+    suppress_poetry_export_warning(session)
 
     if nox_poetry_available:
         session.install(*packages_or_pip_args, **kwargs)
