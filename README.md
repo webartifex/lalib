@@ -95,6 +95,13 @@ The second task lints all source code files with
     [ruff](https://pypi.org/project/ruff/).
 `flake8` is configured with a couple of plug-ins.
 
+You may want to install the [pre-commit](https://pre-commit.com/) hooks
+    that come with the project:
+
+`nox -s pre-commit-install`
+
+Then, the linting and testing occurs automatically before every commit.
+
 
 #### Test Suite
 

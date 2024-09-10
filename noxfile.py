@@ -250,7 +250,10 @@ def test(session: nox.Session) -> None:
     install_unpinned(session, "-e", ".")  # "-e" makes session reuseable
     install_pinned(session, *TEST_DEPENDENCIES)
 
-    args = session.posargs or (
+    # If this function is run by the `pre-commit` framework, extra
+    # arguments are dropped by the hack inside `pre_commit_test_hook()`
+    posargs = () if session.env.get("_drop_posargs") else session.posargs
+    args = posargs or (
         "--cov",
         "--no-cov-on-fail",
         TESTS_LOCATION,
@@ -319,6 +322,39 @@ def test_docstrings(session: nox.Session) -> None:
 
     session.run("xdoctest", "--version")
     session.run("xdoctest", "src/lalib")
+
+
+@nox_session(name="pre-commit-install", python=MAIN_PYTHON, venv_backend="none")
+def pre_commit_install(session: nox.Session) -> None:
+    """Install `pre-commit` hooks."""
+    for type_ in ("pre-commit", "pre-merge-commit"):
+        session.run(
+            "poetry",
+            "run",
+            "pre-commit",
+            "install",
+            f"--hook-type={type_}",
+            external=True,
+        )
+
+
+@nox_session(name="_pre-commit-test-hook", python=MAIN_PYTHON, reuse_venv=False)
+def pre_commit_test_hook(session: nox.Session) -> None:
+    """`pre-commit` hook to run all tests before merges.
+
+    Ignores the paths to the staged files passed in by the
+    `pre-commit` framework and executes all tests instead. So,
+    `nox -s _pre-commit-test-hook -- FILE1, ...` drops the "FILE1, ...".
+    """
+    do_not_reuse(session)
+
+    # Little Hack: Create a flag in the env(ironment) ...
+    session.env["_drop_posargs"] = "true"
+
+    # ... and call `test()` directly because `session.notify()`
+    # creates the "test" session as a new `nox.Session` object
+    # that does not have the flag set
+    test(session)
 
 
 def do_not_reuse(session: nox.Session, *, raise_error: bool = True) -> None:

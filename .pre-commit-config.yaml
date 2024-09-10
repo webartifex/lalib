@@ -1,0 +1,48 @@
+default_stages:
+  - commit
+fail_fast: true
+repos:
+  - repo: local
+    hooks:
+      - id: local-lint
+        name: Lint the source files
+        entry: nox -s lint --
+        language: system
+        stages:
+          - commit
+        types:
+          - python
+        verbose: true
+      - id: local-test
+        name: Run the entire test suite
+        entry: nox -s _pre-commit-test-hook --
+        language: system
+        stages:
+          - merge-commit
+        types:
+          - text
+        verbose: true
+  - repo: "https://github.com/pre-commit/pre-commit-hooks"
+    rev: v4.6.0
+    hooks:
+      - id: check-added-large-files
+        args:
+          - "--maxkb=100"
+      - id: check-builtin-literals
+      - id: check-case-conflict
+      - id: check-merge-conflict
+      - id: check-toml
+      - id: check-yaml
+      - id: end-of-file-fixer
+        stages:
+          - commit
+      - id: mixed-line-ending
+        args:
+          - "--fix=no"
+      - id: no-commit-to-branch
+        args:
+          - "--branch"
+          - main
+      - id: trailing-whitespace
+        stages:
+          - commit
