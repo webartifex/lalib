@@ -6,7 +6,7 @@ import pathlib
 import random
 import re
 import tempfile
-from collections.abc import Mapping
+from collections.abc import Generator, Mapping
 from typing import Any
 
 import nox
@@ -336,6 +336,43 @@ def test_docstrings(session: nox.Session) -> None:
 
     session.run("xdoctest", "--version")
     session.run("xdoctest", "src/lalib")
+
+
+@nox_session(name="clean-cwd", python=MAIN_PYTHON, venv_backend="none")
+def clean_cwd(session: nox.Session) -> None:
+    """Remove (almost) all glob patterns listed in git's ignore file.
+
+    Compared to `git clean -X` do not remove pyenv's
+    ".python-version" file and poetry's virtual environment.
+    """
+    do_not_remove = (".python-version", ".venv")
+    # Paths are resolved into absolute ones to avoid accidental matches
+    excluded_paths = {pathlib.Path(path).resolve() for path in do_not_remove}
+
+    with pathlib.Path(".gitignore").open() as fp:
+        ignored_patterns = [pattern for pattern in fp if not pattern.startswith("#")]
+
+    for path in _expand(*ignored_patterns):
+        # The `path` must not be a sub-path of an `excluded_path`
+        if {path, *path.parents} & excluded_paths:
+            continue
+
+        session.run("rm", "-rf", path)
+
+
+def _expand(*patterns: str) -> Generator[pathlib.Path, None, None]:
+    """Expand glob patterns into (resolved) paths.
+
+    Args:
+        *patterns: patterns to be expanded
+
+    Yields:
+        expanded: an expanded path
+    """
+    for pattern in patterns:
+        expanded_paths = pathlib.Path.cwd().glob(pattern.strip())
+        for path in expanded_paths:
+            yield path.resolve()
 
 
 @nox_session(name="pre-commit-install", python=MAIN_PYTHON, venv_backend="none")
