@@ -59,6 +59,13 @@ pep8-naming = "^0.14"  # flake8 plug-in
 pydoclint = { extras = ["flake8"], version = "^0.5" }
 ruff = "^0.6"
 
+# Documentation
+sphinx = [
+    { python = "=3.9", version = "^7.4" },
+    { python = ">=3.10", version = "^8.0" },
+]
+sphinx-autodoc-typehints = "^2.3"
+
 # Test suite
 coverage = "^7.6"
 packaging = "^24.1"  # to test the version identifier
@@ -375,6 +382,9 @@ known-first-party = ["lalib"]
 
 
 [tool.ruff.lint.per-file-ignores]
+
+# The "docs/" folder is not a package
+"docs/conf.py" = ["INP001"]
 
 "tests/*.py" = [  # Linting rules for the test suite:
     "ANN",        # - type hints are not required

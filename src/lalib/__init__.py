@@ -13,10 +13,12 @@ try:
     pkg_info = metadata.metadata(__name__)
 
 except metadata.PackageNotFoundError:
+    __author__ = "unknown"
     __pkg_name__ = "unknown"
     __version__ = "unknown"
 
 else:
+    __author__ = pkg_info["author"]
     __pkg_name__ = pkg_info["name"]
     __version__ = pkg_info["version"]
     del pkg_info

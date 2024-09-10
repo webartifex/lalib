@@ -67,8 +67,9 @@ def load_supported_python_versions(*, reverse: bool = False) -> list[str]:
 SUPPORTED_PYTHONS = load_supported_python_versions(reverse=True)
 MAIN_PYTHON = "3.12"
 
+DOCS_SRC, DOCS_BUILD = ("docs/", ".cache/docs/")
 TESTS_LOCATION = "tests/"
-SRC_LOCATIONS = ("./noxfile.py", "src/", TESTS_LOCATION)
+SRC_LOCATIONS = ("./noxfile.py", "src/", DOCS_SRC, TESTS_LOCATION)
 
 
 nox.options.envdir = ".cache/nox"
@@ -78,6 +79,7 @@ nox.options.sessions = (  # run by default when invoking `nox` on the CLI
     "format",
     "lint",
     "audit",
+    "docs",
     "test-docstrings",
     f"test-{MAIN_PYTHON}",
 )
@@ -149,6 +151,23 @@ def audit_unpinned_dependencies(session: nox.Session) -> None:
         "--progress-spinner=off",
         "--strict",
     )
+
+
+@nox_session(python=MAIN_PYTHON)
+def docs(session: nox.Session) -> None:
+    """Build the documentation with `sphinx`."""
+    start(session)
+
+    # The documentation tools require the developed package as
+    # otherwise sphinx's autodoc could not include the docstrings
+    session.debug("Install only the `lalib` package and the documentation tools")
+    install_unpinned(session, "-e", ".")  # editable to be able to reuse the session
+    install_pinned(session, "sphinx", "sphinx-autodoc-typehints")
+
+    session.run("sphinx-build", "--builder=html", DOCS_SRC, DOCS_BUILD)
+    session.run("sphinx-build", "--builder=linkcheck", DOCS_SRC, DOCS_BUILD)  # > 200 OK
+
+    session.log(f"Docs are available at {DOCS_BUILD}index.html")
 
 
 @nox_session(name="format", python=MAIN_PYTHON)
