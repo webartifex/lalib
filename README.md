@@ -156,3 +156,15 @@ So, releases to [PyPI](https://pypi.org/project/lalib/#history)
     come in the popular `major.minor.patch` format.
 The specific rules for this project are explained
     [here](https://github.com/webartifex/lalib/blob/main/tests/test_version.py).
+
+
+## Releases
+
+
+### v0.4.2, 2024-09-10
+
+- This release provides no functionality
+- Its purpose is to (re-)claim the
+  [lalib](https://pypi.org/project/lalib/) name on PyPI
+- We can *not* start with **v0.1.0**
+  because we already used this when learning to use PyPI years back
