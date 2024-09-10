@@ -1,0 +1,29 @@
+name: test-coverage
+on: push
+jobs:
+  test-coverage:
+    runs-on: ubuntu-latest
+    name: test-coverage
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          # Make all of the below versions available simultaneously
+          python-version: |
+            3.9
+            3.10
+            3.11
+            3.12
+          architecture: x64
+
+      - run: python --version
+      - run: pip --version
+
+      # The following pinned dependencies must be updated manually
+      - run: pip install nox==2024.4.15
+      - run: pip install poetry==1.8.3
+
+      # "test-coverage" triggers further nox sessions,
+      # one for each of the above Python versions,
+      # before all results are collected together
+      - run: nox -s test-coverage
