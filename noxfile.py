@@ -13,15 +13,6 @@ import nox
 from packaging import version as pkg_version
 
 
-try:
-    from nox_poetry import session as nox_session
-except ImportError:
-    nox_session = nox.session
-    nox_poetry_available = False
-else:
-    nox_poetry_available = True
-
-
 def nested_defaultdict() -> collections.defaultdict[str, Any]:
     """Create a multi-level `defaultdict` with variable depth.
 
@@ -87,7 +78,7 @@ nox.options.sessions = (  # run by default when invoking `nox` on the CLI
 nox.options.stop_on_first_error = True
 
 
-@nox_session(name="audit", python=MAIN_PYTHON, reuse_venv=False)
+@nox.session(name="audit", python=MAIN_PYTHON, reuse_venv=False)
 def audit_pinned_dependencies(session: nox.Session) -> None:
     """Check dependencies for vulnerabilities with `pip-audit`.
 
@@ -121,7 +112,7 @@ def audit_pinned_dependencies(session: nox.Session) -> None:
         )
 
 
-@nox_session(name="audit-updates", python=MAIN_PYTHON, reuse_venv=False)
+@nox.session(name="audit-updates", python=MAIN_PYTHON, reuse_venv=False)
 def audit_unpinned_dependencies(session: nox.Session) -> None:
     """Check updates for dependencies with `pip-audit`.
 
@@ -154,7 +145,7 @@ def audit_unpinned_dependencies(session: nox.Session) -> None:
     )
 
 
-@nox_session(python=MAIN_PYTHON)
+@nox.session(python=MAIN_PYTHON)
 def docs(session: nox.Session) -> None:
     """Build the documentation with `sphinx`."""
     start(session)
@@ -171,7 +162,7 @@ def docs(session: nox.Session) -> None:
     session.log(f"Docs are available at {DOCS_BUILD}index.html")
 
 
-@nox_session(name="format", python=MAIN_PYTHON)
+@nox.session(name="format", python=MAIN_PYTHON)
 def format_(session: nox.Session) -> None:
     """Format source files with `autoflake`, `black`, and `isort`."""
     start(session)
@@ -193,7 +184,7 @@ def format_(session: nox.Session) -> None:
     session.run("ruff", "check", "--fix-only", *locations)
 
 
-@nox_session(python=MAIN_PYTHON)
+@nox.session(python=MAIN_PYTHON)
 def lint(session: nox.Session) -> None:
     """Lint source files with `flake8`, `mypy`, and `ruff`."""
     start(session)
@@ -243,7 +234,7 @@ TEST_DEPENDENCIES = (
 )
 
 
-@nox_session(python=SUPPORTED_PYTHONS)
+@nox.session(python=SUPPORTED_PYTHONS)
 def test(session: nox.Session) -> None:
     """Test code with `pytest`."""
     start(session)
@@ -266,7 +257,7 @@ def test(session: nox.Session) -> None:
 _magic_number = random.randint(0, 987654321)  # noqa: S311
 
 
-@nox_session(name="test-coverage", python=MAIN_PYTHON, reuse_venv=True)
+@nox.session(name="test-coverage", python=MAIN_PYTHON, reuse_venv=True)
 def test_coverage(session: nox.Session) -> None:
     """Report the combined coverage statistics.
 
@@ -282,7 +273,7 @@ def test_coverage(session: nox.Session) -> None:
     session.notify("_test-coverage-report", (_magic_number,))
 
 
-@nox_session(name="_test-coverage-run", python=SUPPORTED_PYTHONS, reuse_venv=False)
+@nox.session(name="_test-coverage-run", python=SUPPORTED_PYTHONS, reuse_venv=False)
 def test_coverage_run(session: nox.Session) -> None:
     """Measure the test coverage."""
     do_not_reuse(session)
@@ -304,7 +295,7 @@ def test_coverage_run(session: nox.Session) -> None:
     )
 
 
-@nox_session(name="_test-coverage-report", python=MAIN_PYTHON, reuse_venv=True)
+@nox.session(name="_test-coverage-report", python=MAIN_PYTHON, reuse_venv=True)
 def test_coverage_report(session: nox.Session) -> None:
     """Report the combined coverage statistics."""
     do_not_run_directly(session)
@@ -328,7 +319,7 @@ def test_coverage_report(session: nox.Session) -> None:
         session.run("python", "-m", "coverage", "report", "--fail-under=100")
 
 
-@nox_session(name="test-docstrings", python=MAIN_PYTHON)
+@nox.session(name="test-docstrings", python=MAIN_PYTHON)
 def test_docstrings(session: nox.Session) -> None:
     """Test docstrings with `xdoctest`."""
     start(session)
@@ -338,7 +329,7 @@ def test_docstrings(session: nox.Session) -> None:
     session.run("xdoctest", "src/lalib")
 
 
-@nox_session(name="clean-cwd", python=MAIN_PYTHON, venv_backend="none")
+@nox.session(name="clean-cwd", python=MAIN_PYTHON, venv_backend="none")
 def clean_cwd(session: nox.Session) -> None:
     """Remove (almost) all glob patterns listed in git's ignore file.
 
@@ -375,7 +366,7 @@ def _expand(*patterns: str) -> Generator[pathlib.Path, None, None]:
             yield path.resolve()
 
 
-@nox_session(name="pre-commit-install", python=MAIN_PYTHON, venv_backend="none")
+@nox.session(name="pre-commit-install", python=MAIN_PYTHON, venv_backend="none")
 def pre_commit_install(session: nox.Session) -> None:
     """Install `pre-commit` hooks."""
     for type_ in ("pre-commit", "pre-merge-commit"):
@@ -389,7 +380,7 @@ def pre_commit_install(session: nox.Session) -> None:
         )
 
 
-@nox_session(name="_pre-commit-test-hook", python=MAIN_PYTHON, reuse_venv=False)
+@nox.session(name="_pre-commit-test-hook", python=MAIN_PYTHON, reuse_venv=False)
 def pre_commit_test_hook(session: nox.Session) -> None:
     """`pre-commit` hook to run all tests before merges.
 
@@ -471,10 +462,6 @@ def install_pinned(
 
     suppress_poetry_export_warning(session)
 
-    if nox_poetry_available:
-        session.install(*packages_or_pip_args, **kwargs)
-        return
-
     with tempfile.NamedTemporaryFile() as requirements_txt:
         session.run(
             "poetry",
@@ -512,20 +499,7 @@ def install_unpinned(
     if session._runner.global_config.no_install and venv._reused:  # noqa: SLF001
         return
 
-    if kwargs.get("silent") is None:
-        kwargs["silent"] = True
-
-    # Cannot use `session.install(...)` here because
-    # with "nox-poetry" installed this leads to an
-    # installation respecting the "poetry.lock" file
-    session.run(
-        "python",
-        "-m",
-        "pip",
-        "install",
-        *packages_or_pip_args,
-        **kwargs,
-    )
+    session.install(*packages_or_pip_args, **kwargs)
 
 
 if MAIN_PYTHON not in SUPPORTED_PYTHONS:

@@ -277,7 +277,6 @@ cache_dir = ".cache/mypy"
 
 module = [
     "nox",
-    "nox_poetry",
     "pytest",
     "semver",
     "tomli",
