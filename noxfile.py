@@ -1,6 +1,7 @@
 """Maintenance tasks run in isolated environments."""
 
 import collections
+import os
 import pathlib
 import random
 import re
@@ -311,7 +312,20 @@ def test_coverage_report(session: nox.Session) -> None:
     install_pinned(session, "coverage")
 
     session.run("python", "-m", "coverage", "combine")
-    session.run("python", "-m", "coverage", "report", "--fail-under=100")
+
+    if codecov_token := os.environ.get("CODECOV_TOKEN"):
+        install_unpinned(session, "codecov-cli")
+        session.run("python", "-m", "coverage", "xml", "--fail-under=0")
+        session.run(
+            "codecovcli",
+            "upload-process",
+            "--fail-on-error",
+            "--file=.cache/coverage/report.xml",
+            f"--token={codecov_token}",
+        )
+
+    else:
+        session.run("python", "-m", "coverage", "report", "--fail-under=100")
 
 
 @nox_session(name="test-docstrings", python=MAIN_PYTHON)

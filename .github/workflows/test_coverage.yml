@@ -27,3 +27,5 @@ jobs:
       # one for each of the above Python versions,
       # before all results are collected together
       - run: nox -s test-coverage
+        env:
+          CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}

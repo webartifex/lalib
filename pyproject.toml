@@ -131,6 +131,11 @@ parallel = true
 source = ["lalib"]
 
 
+[tool.coverage.xml]
+
+output = ".cache/coverage/report.xml"
+
+
 
 [tool.flake8]
 
