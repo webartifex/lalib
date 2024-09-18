@@ -78,6 +78,7 @@ semver = "^3.0"  # to test the version identifier
 tomli = [ { python = "<3.11", version = "^2.0" } ]
 xdoctest = { extras = ["colors"], version = "^1.2" }
 
+
 [tool.poetry.urls]
 
 "Issues Tracker" = "https://github.com/webartifex/lalib/issues"
