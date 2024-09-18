@@ -14,6 +14,7 @@ import xdoctest
     "module",
     [
         "lalib",
+        "lalib.elements.gf2",
     ],
 )
 def test_docstrings(module):

@@ -30,6 +30,8 @@ repository = "https://github.com/webartifex/lalib"
 
 python = "^3.9"
 
+typing-extensions = [ { python = "<3.11", version = "^4.12" } ]  # to support Python 3.9 & 3.10
+
 
 [tool.poetry.group.dev.dependencies]
 
@@ -126,6 +128,9 @@ exclude_lines = [
 
     # "pragma: no cover"
     # => Intentionally commented out as we thrive for 100% test coverage
+
+    # PyPI's "typing-extensions" are needed to make `mypy` work
+    "pragma: no cover ${PRAGMA_SUPPORT_39_N_310}",
 
 ]
 
