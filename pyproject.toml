@@ -122,6 +122,13 @@ show_missing = true
 skip_covered = true
 skip_empty = true
 
+exclude_lines = [
+
+    # "pragma: no cover"
+    # => Intentionally commented out as we thrive for 100% test coverage
+
+]
+
 
 [tool.coverage.run]
 
