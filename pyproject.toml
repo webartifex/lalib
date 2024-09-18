@@ -185,6 +185,8 @@ extend-ignore = [  # never check the following codes
 
     "ANN401",  # allow dynamically typed expressions with `typing.Any`
 
+    "DOC301",  # PEP257 => class constructor's docstring go in `.__init__()`
+
     # Comply with black's style
     # Sources: https://black.readthedocs.io/en/stable/guides/using_black_with_other_tools.html#pycodestyle
     "E203", "E701", "E704", "W503",
