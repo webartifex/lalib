@@ -230,6 +230,7 @@ TEST_DEPENDENCIES = (
     "pytest",
     "pytest-cov",
     "semver",
+    'typing-extensions; python_version < "3.11"',  # to support Python 3.9 & 3.10
     "xdoctest",
 )
 
@@ -284,6 +285,7 @@ def test_coverage_run(session: nox.Session) -> None:
     session.install(".")
     install_pinned(session, "coverage", *TEST_DEPENDENCIES)
 
+    session.env["NO_CROSS_REFERENCE"] = "true"
     session.run(
         "python",
         "-m",
@@ -429,6 +431,11 @@ def start(session: nox.Session) -> None:
     session.env["BLACK_CACHE_DIR"] = ".cache/black"
     session.env["PIP_CACHE_DIR"] = ".cache/pip"
     session.env["PIP_DISABLE_PIP_VERSION_CHECK"] = "true"
+
+    if session.python in ("3.12", "3.11"):
+        session.env["PRAGMA_SUPPORT_39_N_310"] = "to support Python 3.9 & 3.10"
+    else:
+        session.env["PRAGMA_SUPPORT_39_N_310"] = f"{_magic_number =}"
 
 
 def suppress_poetry_export_warning(session: nox.Session) -> None:

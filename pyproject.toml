@@ -30,6 +30,8 @@ repository = "https://github.com/webartifex/lalib"
 
 python = "^3.9"
 
+typing-extensions = [ { python = "<3.11", version = "^4.12" } ]  # to support Python 3.9 & 3.10
+
 
 [tool.poetry.group.dev.dependencies]
 
@@ -78,6 +80,7 @@ semver = "^3.0"  # to test the version identifier
 tomli = [ { python = "<3.11", version = "^2.0" } ]
 xdoctest = { extras = ["colors"], version = "^1.2" }
 
+
 [tool.poetry.urls]
 
 "Issues Tracker" = "https://github.com/webartifex/lalib/issues"
@@ -120,6 +123,16 @@ show_missing = true
 
 skip_covered = true
 skip_empty = true
+
+exclude_lines = [
+
+    # "pragma: no cover"
+    # => Intentionally commented out as we thrive for 100% test coverage
+
+    # PyPI's "typing-extensions" are needed to make `mypy` work
+    "pragma: no cover ${PRAGMA_SUPPORT_39_N_310}",
+
+]
 
 
 [tool.coverage.run]
@@ -176,6 +189,8 @@ extend-ignore = [  # never check the following codes
     "ANN101", "ANN102",  # `self` and `cls` in methods need no annotation
 
     "ANN401",  # allow dynamically typed expressions with `typing.Any`
+
+    "DOC301",  # PEP257 => class constructor's docstring go in `.__init__()`
 
     # Comply with black's style
     # Sources: https://black.readthedocs.io/en/stable/guides/using_black_with_other_tools.html#pycodestyle
