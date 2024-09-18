@@ -14,6 +14,7 @@ import xdoctest
     "module",
     [
         "lalib",
+        "lalib.elements",
         "lalib.elements.gf2",
     ],
 )
