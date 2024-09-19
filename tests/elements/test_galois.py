@@ -14,15 +14,16 @@ import pytest
 from lalib.elements import galois
 
 
-one, zero = (
+gf2, one, zero = (  # official API outside of `lalib.elements.galois`
+    galois.gf2,
     galois.one,
     galois.zero,
 )
 
-gf2, GF2One, GF2Zero = (
-    galois.gf2,
-    galois.GF2One,
-    galois.GF2Zero,
+GF2Element, GF2One, GF2Zero = (  # not part of the official API
+    galois.GF2Element,
+    type(galois.one),  # The `GF2One` and `GF2Zero` sub-classes
+    type(galois.zero),  # are deleted in `lalib.elements.galois`
 )
 
 _THRESHOLD = galois.THRESHOLD
@@ -87,11 +88,28 @@ def test_thresholds():
     assert within_threshold < default_threshold < not_within_threshold
 
 
+class TestGF2SubClasses:
+    """Test the sub-classes behind `one` and `zero`."""
+
+    def test_gf2_is_an_alias(self):
+        """The "`gf2` type" is really just `GF2Element`."""
+        assert gf2 is GF2Element
+
+    @pytest.mark.parametrize("cls", [GF2One, GF2Zero])
+    def test_sub_classes_for_gf2(self, cls):
+        """`GF2One` and `GF2Zero` are sub-classes of `gf2`."""
+        assert issubclass(cls, gf2)
+
+
 @pytest.mark.parametrize("cls", [gf2, GF2One, GF2Zero])
 class TestGF2Casting:
     """Test the `gf2` class's constructor.
 
     `gf2(value, ...)` returns either `one` or `zero`.
+
+    The sub-classes behind `one` and `zero` provide the
+    same functionality as `gf2` and have the sole purpose
+    of providing a unique `help()` message for `one` and `zero`.
     """
 
     @pytest.mark.parametrize("value", strict_one_like_values)

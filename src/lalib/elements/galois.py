@@ -523,6 +523,10 @@ class GF2Element(metaclass=GF2Meta):
 numbers.Rational.register(GF2Element)
 
 
+# The `GF2One` and `GF2Zero` sub-classes' primary purpose
+# is to give `one` and `zero` their very own `help()` message
+
+
 class GF2One(GF2Element):
     """The Galois field value `one`."""
 
@@ -544,3 +548,5 @@ gf2 = GF2Element
 
 
 del GF2Meta
+del GF2One
+del GF2Zero
