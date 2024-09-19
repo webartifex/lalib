@@ -19,8 +19,6 @@ one, zero = (
     galois.zero,
 )
 
-to_gf2 = galois.to_gf2
-
 gf2, GF2One, GF2Zero = (
     galois.gf2,
     galois.GF2One,
@@ -89,77 +87,8 @@ def test_thresholds():
     assert within_threshold < default_threshold < not_within_threshold
 
 
-class TestGF2Casting:
-    """Test the `to_gf2()` function.
-
-    `to_gf2(...)` casts numbers into either `1` or `0`.
-    """
-
-    @pytest.mark.parametrize("value", strict_one_like_values)
-    def test_cast_ones_strictly(self, value):
-        """`to_gf2(value, strict=True)` returns `1`."""
-        result1 = to_gf2(value)  # `strict=True` by default
-        assert result1 == 1
-
-        result2 = to_gf2(value, strict=True)
-        assert result2 == 1
-
-    @pytest.mark.parametrize("value", one_like_values)
-    def test_cast_ones_not_strictly(self, value):
-        """`to_gf2(value, strict=False)` returns `1`."""
-        result = to_gf2(value, strict=False)
-        assert result == 1
-
-    @pytest.mark.parametrize("value", non_strict_one_like_values)
-    def test_cannot_cast_ones_strictly(self, value):
-        """`to_gf2(value, strict=False)` returns `1`."""
-        with pytest.raises(ValueError, match="`1`-like or `0`-like"):
-            to_gf2(value)
-
-        with pytest.raises(ValueError, match="`1`-like or `0`-like"):
-            to_gf2(value, strict=True)
-
-    @pytest.mark.parametrize("value", zero_like_values)
-    def test_cast_zeros(self, value):
-        """`to_gf2(value, strict=...)` returns `0`."""
-        result1 = to_gf2(value)  # `strict=True` by default
-        assert result1 == 0
-
-        result2 = to_gf2(value, strict=True)
-        assert result2 == 0
-
-        result3 = to_gf2(value, strict=False)
-        assert result3 == 0
-
-    @pytest.mark.parametrize(
-        "value",
-        [
-            complex(1, not_within_threshold),
-            complex(0, not_within_threshold),
-        ],
-    )
-    @pytest.mark.parametrize("strict", [True, False])
-    def test_cannot_cast_with_non_zero_imag_part(self, value, strict):
-        """Cannot create `1` or `0` if `.imag != 0`."""
-        with pytest.raises(ValueError, match="`1`-like or `0`-like"):
-            to_gf2(value, strict=strict)
-
-    @pytest.mark.parametrize("value", ["abc", (1,), [1]])
-    @pytest.mark.parametrize("strict", [True, False])
-    def test_cannot_cast_from_wrong_type(self, value, strict):
-        """Cannot create `1` or `0` from a non-numeric value."""
-        with pytest.raises(TypeError):
-            to_gf2(value, strict=strict)
-
-    @pytest.mark.parametrize("strict", [True, False])
-    def test_cannot_cast_from_nan_value(self, strict):
-        """Cannot create `1` or `0` from undefined value."""
-        with pytest.raises(ValueError, match="`1`-like or `0`-like"):
-            to_gf2(float("NaN"), strict=strict)
-
-
 @pytest.mark.parametrize("cls", [gf2, GF2One, GF2Zero])
-class TestGF2ConstructorWithCastedValue:
+class TestGF2Casting:
     """Test the `gf2` class's constructor.
 
     `gf2(value, ...)` returns either `one` or `zero`.

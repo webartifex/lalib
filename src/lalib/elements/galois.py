@@ -46,7 +46,7 @@ except ImportError:  # pragma: no cover to support Python 3.9 & 3.10
 THRESHOLD = 1e-12
 
 
-def to_gf2(
+def _to_gf2(
     value: complex,  # `mypy` reads `complex | float | int`
     *,
     strict: bool = True,
@@ -148,7 +148,7 @@ class GF2Element(metaclass=GF2Meta):
                     msg = "Must create `one` and `zero` first (internal error)"
                     raise RuntimeError(msg) from None
         else:
-            value = to_gf2(value, strict=strict, threshold=threshold)  # type: ignore[arg-type]
+            value = _to_gf2(value, strict=strict, threshold=threshold)  # type: ignore[arg-type]
 
         try:
             return cls._instances[value]
