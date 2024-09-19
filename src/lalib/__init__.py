@@ -22,7 +22,7 @@ one
 
 from importlib import metadata
 
-from lalib.elements import gf2
+from lalib import elements
 
 
 try:
@@ -40,15 +40,15 @@ else:
     del pkg_info
 
 
-GF2, one, zero = gf2.GF2, gf2.one, gf2.zero
+gf2, one, zero = elements.gf2, elements.one, elements.zero
 
 
-del gf2
+del elements
 del metadata
 
 
 __all__ = (
-    "GF2",
+    "gf2",
     "one",
     "zero",
 )

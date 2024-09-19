@@ -2,7 +2,7 @@
 
 This module defines two singleton objects, `one` and `zero`,
 that follow the rules of a Galois field of two elements,
-or `GF2` for short:
+also called `GF2` in `lalib`:
 
 >>> one + one
 zero
@@ -22,7 +22,10 @@ zero
 zero
 
 Further usage explanations of `one` and `zero`
-can be found in the various docstrings of the `GF2` class.
+can be found in the various docstrings of the `GF2Element` class.
+
+This class is also referred to as just "the `gf2` type" outside
+this module.
 """
 
 import abc
@@ -102,15 +105,16 @@ def to_gf2(
     return 1
 
 
-class _GF2Meta(abc.ABCMeta):
-    """Make data type of `one` and `zero` appear to be `GF2`."""
+class GF2Meta(abc.ABCMeta):
+    """Make data type of `one` and `zero` appear to be `gf2`."""
 
     def __repr__(cls) -> str:
-        return "GF2"
+        """Text representation for `GF2Element` and sub-classes."""
+        return "gf2"
 
 
 @functools.total_ordering
-class GF2(metaclass=_GF2Meta):
+class GF2Element(metaclass=GF2Meta):
     """A Galois field value: either `one` or `zero`.
 
     Implements the singleton design pattern such that
@@ -276,8 +280,8 @@ class GF2(metaclass=_GF2Meta):
         Either `1` or `0`.
 
         Reasoning:
-            - `int(one) == 1` => `GF2(1 / 1) == one`
-            - `int(zero) == 0` => `GF2(0 / 1) == zero`
+            - `int(one) == 1` => `gf2(1 / 1) == one`
+            - `int(zero) == 0` => `gf2(0 / 1) == zero`
 
         See also docstring for `.denominator`.
         """
@@ -287,7 +291,7 @@ class GF2(metaclass=_GF2Meta):
     def denominator(self) -> Literal[1]:
         """Smallest denominator when expressed as a `Rational` number.
 
-        Always `1` for `GF2` values.
+        Always `1` for `gf2` values.
 
         See also docstring for `.numerator`.
         """
@@ -308,7 +312,7 @@ class GF2(metaclass=_GF2Meta):
         True
         """
         try:
-            other = GF2(other)
+            other = GF2Element(other)
         except (TypeError, ValueError):
             return False
         else:
@@ -327,7 +331,7 @@ class GF2(metaclass=_GF2Meta):
         True
         """
         try:
-            other = GF2(other)
+            other = GF2Element(other)
         except TypeError:
             return NotImplemented
         except ValueError:
@@ -358,16 +362,16 @@ class GF2(metaclass=_GF2Meta):
     def _compute(self, other: object, func: Callable) -> Self:
         """Run arithmetic operations using `int`s.
 
-        The `GF2` atithmetic operations can transparently be conducted
+        The `gf2` atithmetic operations can transparently be conducted
         by converting `self` and `other` into `int`s first, and
         then "do the math".
 
         Besides the generic arithmetic, this method also handles the
-        casting of non-`GF2` values and various errors occuring
+        casting of non-`gf2` values and various errors occuring
         along the way.
         """
         try:
-            other = GF2(other)
+            other = GF2Element(other)
         except TypeError:
             return NotImplemented
         except ValueError:
@@ -391,7 +395,7 @@ class GF2(metaclass=_GF2Meta):
     def __add__(self, other: object) -> Self:
         """Addition / Subtraction: `self + other` / `self - other`.
 
-        For `GF2`, addition and subtraction are identical. Besides
+        For `gf2`, addition and subtraction are identical. Besides
         `one + one` which cannot result in a "two", all operations
         behave as one would expect from `int`s.
 
@@ -417,7 +421,7 @@ class GF2(metaclass=_GF2Meta):
     def __mul__(self, other: object) -> Self:
         """Multiplication: `self * other`.
 
-        Multiplying `GF2` values is like multiplying `int`s.
+        Multiplying `gf2` values is like multiplying `int`s.
 
         Example usage:
 
@@ -435,7 +439,7 @@ class GF2(metaclass=_GF2Meta):
     def __truediv__(self, other: object) -> Self:
         """Division: `self / other` and `self // other`.
 
-        Dividing `GF2` values is like dividing `int`s.
+        Dividing `gf2` values is like dividing `int`s.
 
         Example usage:
 
@@ -466,7 +470,7 @@ class GF2(metaclass=_GF2Meta):
     def __mod__(self, other: object) -> Self:
         """Modulo Division: `self % other`.
 
-        Modulo dividing `GF2` values is like modulo dividing `int`s.
+        Modulo dividing `gf2` values is like modulo dividing `int`s.
 
         Example usage:
 
@@ -493,7 +497,7 @@ class GF2(metaclass=_GF2Meta):
     def __pow__(self, other: object, _modulo: Optional[object] = None) -> Self:
         """Exponentiation: `self ** other`.
 
-        Powers of `GF2` values are like powers of `int`s.
+        Powers of `gf2` values are like powers of `int`s.
 
         Example usage:
 
@@ -516,16 +520,16 @@ class GF2(metaclass=_GF2Meta):
         return self._compute(other, lambda s, o: o**s)
 
 
-numbers.Rational.register(GF2)
+numbers.Rational.register(GF2Element)
 
 
-class GF2One(GF2):
+class GF2One(GF2Element):
     """The Galois field value `one`."""
 
     _value = 1
 
 
-class GF2Zero(GF2):
+class GF2Zero(GF2Element):
     """The Galois field value `zero`."""
 
     _value = 0
@@ -533,3 +537,10 @@ class GF2Zero(GF2):
 
 one = GF2One()
 zero = GF2Zero()
+
+
+# Outside this module the `GF2Element` is just "the `gf2` type"
+gf2 = GF2Element
+
+
+del GF2Meta

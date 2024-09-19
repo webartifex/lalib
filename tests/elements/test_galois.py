@@ -1,4 +1,4 @@
-"""Test the `GF2` singeltons `one` and `zero`."""
+"""Test the `gf2` singeltons `one` and `zero`."""
 
 import decimal
 import fractions
@@ -11,25 +11,25 @@ import sys
 
 import pytest
 
-from lalib.elements import gf2
+from lalib.elements import galois
 
 
 one, zero = (
-    gf2.one,
-    gf2.zero,
+    galois.one,
+    galois.zero,
 )
 
-to_gf2 = gf2.to_gf2
+to_gf2 = galois.to_gf2
 
-GF2, GF2One, GF2Zero = (
-    gf2.GF2,
-    gf2.GF2One,
-    gf2.GF2Zero,
+gf2, GF2One, GF2Zero = (
+    galois.gf2,
+    galois.GF2One,
+    galois.GF2Zero,
 )
 
-_THRESHOLD = gf2.THRESHOLD
+_THRESHOLD = galois.THRESHOLD
 
-del gf2
+del galois
 
 
 CROSS_REFERENCE = not os.environ.get("NO_CROSS_REFERENCE")
@@ -158,16 +158,16 @@ class TestGF2Casting:
             to_gf2(float("NaN"), strict=strict)
 
 
-@pytest.mark.parametrize("cls", [GF2, GF2One, GF2Zero])
+@pytest.mark.parametrize("cls", [gf2, GF2One, GF2Zero])
 class TestGF2ConstructorWithCastedValue:
-    """Test the `GF2` class's constructor.
+    """Test the `gf2` class's constructor.
 
-    `GF2(value, ...)` returns either `one` or `zero`.
+    `gf2(value, ...)` returns either `one` or `zero`.
     """
 
     @pytest.mark.parametrize("value", strict_one_like_values)
     def test_cast_ones_strictly(self, cls, value):
-        """`GF2(value, strict=True)` returns `one`."""
+        """`gf2(value, strict=True)` returns `one`."""
         result1 = cls(value)  # `strict=True` by default
         assert result1 is one
 
@@ -176,13 +176,13 @@ class TestGF2ConstructorWithCastedValue:
 
     @pytest.mark.parametrize("value", one_like_values)
     def test_cast_ones_not_strictly(self, cls, value):
-        """`GF2(value, strict=False)` returns `one`."""
+        """`gf2(value, strict=False)` returns `one`."""
         result = cls(value, strict=False)
         assert result is one
 
     @pytest.mark.parametrize("value", non_strict_one_like_values)
     def test_cannot_cast_ones_strictly(self, cls, value):
-        """`GF2(value, strict=False)` returns `1`."""
+        """`gf2(value, strict=False)` returns `1`."""
         with pytest.raises(ValueError, match="`1`-like or `0`-like"):
             cls(value)
 
@@ -191,7 +191,7 @@ class TestGF2ConstructorWithCastedValue:
 
     @pytest.mark.parametrize("value", zero_like_values)
     def test_cast_zeros(self, cls, value):
-        """`GF2(value, strict=...)` returns `zero`."""
+        """`gf2(value, strict=...)` returns `zero`."""
         result1 = cls(value)  # `strict=True` by default
         assert result1 is zero
 
@@ -229,7 +229,7 @@ class TestGF2ConstructorWithCastedValue:
 
     @pytest.mark.parametrize("scaler", [1, 10, 100, 1000])
     def test_get_one_if_within_threshold(self, cls, scaler):
-        """`GF2()` returns `one` if `value` is larger than `threshold`."""
+        """`gf2()` returns `one` if `value` is larger than `threshold`."""
         # `not_within_threshold` is larger than the `default_threshold`
         # but still different from `1` => `strict=False`
         value = scaler * not_within_threshold
@@ -241,7 +241,7 @@ class TestGF2ConstructorWithCastedValue:
     @pytest.mark.parametrize("scaler", [1, 10, 100, 1000])
     @pytest.mark.parametrize("strict", [True, False])
     def test_get_zero_if_within_threshold(self, cls, scaler, strict):
-        """`GF2()` returns `zero` if `value` is smaller than `threshold`."""
+        """`gf2()` returns `zero` if `value` is smaller than `threshold`."""
         # `within_threshold` is smaller than the `default_threshold`
         value = scaler * within_threshold
         threshold = scaler * default_threshold
@@ -252,9 +252,9 @@ class TestGF2ConstructorWithCastedValue:
 
 @pytest.mark.parametrize("strict", [True, False])
 class TestGF2ConstructorWithoutCastedValue:
-    """Test the `GF2` class's constructor.
+    """Test the `gf2` class's constructor.
 
-    `GF2()` returns either `one` or `zero`.
+    `gf2()` returns either `one` or `zero`.
     """
 
     def test_get_one_from_sub_class_with_no_input_value(self, strict):
@@ -262,9 +262,9 @@ class TestGF2ConstructorWithoutCastedValue:
         result = GF2One(strict=strict)
         assert result is one
 
-    @pytest.mark.parametrize("cls", [GF2, GF2Zero])
+    @pytest.mark.parametrize("cls", [gf2, GF2Zero])
     def test_get_zero_with_no_input_value(self, cls, strict):
-        """`GF2()` and `GF2Zero()` return `zero`."""
+        """`gf2()` and `GF2Zero()` return `zero`."""
         result = cls(strict=strict)
         assert result is zero
 
@@ -273,12 +273,12 @@ class TestGenericBehavior:
     """Test the classes behind `one` and `zero`."""
 
     def test_cannot_instantiate_base_class_alone(self, monkeypatch):
-        """`GF2One` and `GF2Zero` must be instantiated before `GF2`."""
-        monkeypatch.setattr(GF2, "_instances", {})
+        """`GF2One` and `GF2Zero` must be instantiated before `gf2`."""
+        monkeypatch.setattr(gf2, "_instances", {})
         with pytest.raises(RuntimeError, match="internal error"):
-            GF2()
+            gf2()
 
-    @pytest.mark.parametrize("cls", [GF2, GF2One, GF2Zero])
+    @pytest.mark.parametrize("cls", [gf2, GF2One, GF2Zero])
     def test_create_singletons(self, cls):
         """Singleton pattern: The classes always return the same instance."""
         first = cls()
@@ -292,7 +292,7 @@ class TestGenericBehavior:
         the sub-classes that create `one` and `zero`.
         """
         sub_cls = type(obj)
-        assert sub_cls is not GF2
+        assert sub_cls is not gf2
 
         new_obj = sub_cls()
         assert new_obj is obj
@@ -311,7 +311,7 @@ class TestGenericBehavior:
         """`one` and `zero` are officially `Numbers`s."""
         assert isinstance(obj, type_)
 
-    @pytest.mark.parametrize("cls", [GF2, GF2One, GF2Zero])
+    @pytest.mark.parametrize("cls", [gf2, GF2One, GF2Zero])
     @pytest.mark.parametrize(
         "method",
         [
@@ -339,8 +339,8 @@ class TestGenericBehavior:
         value,
     ):
         """Ensure all of `numbers.Rational`'s abstact methods are implemented."""
-        monkeypatch.setattr(GF2, "_instances", {})
-        monkeypatch.delattr(GF2, method)
+        monkeypatch.setattr(gf2, "_instances", {})
+        monkeypatch.delattr(gf2, method)
 
         sub_cls = type("GF2Baby", (cls, numbers.Rational), {})
 
@@ -362,14 +362,14 @@ class TestGenericBehavior:
     @pytest.mark.parametrize("func", [repr, str])
     @pytest.mark.parametrize("obj", [one, zero])
     def test_text_repr_for_classes(self, func, obj):
-        """'GF2' is the text representation for all sub-classes ...
+        """'gf2' is the text representation for all sub-classes ...
 
-        ... which is valid code referring to the base class `GF2`.
+        ... which is valid code referring to the base class `gf2`.
 
-        `GF2()` returns `zero` if called without arguments.
+        `gf2()` returns `zero` if called without arguments.
         """
         base_cls = eval(func(type(obj)))  # noqa: S307
-        assert base_cls is GF2
+        assert base_cls is gf2
 
         new_obj = base_cls()
         assert new_obj is zero
@@ -595,10 +595,10 @@ class TestArithmetic:
 
         if CROSS_REFERENCE:  # cast `one` and `zero` as `integer`s before doing the math
 
-            result3 = GF2((operator(int(abs(first)), int(abs(second))) + 2) % 2)
+            result3 = gf2((operator(int(abs(first)), int(abs(second))) + 2) % 2)
             assert result3 is expected
 
-            result4 = GF2((operator(int(abs(second)), int(abs(first))) + 2) % 2)
+            result4 = gf2((operator(int(abs(second)), int(abs(first))) + 2) % 2)
             assert result4 is expected
 
     @pytest.mark.parametrize(
@@ -631,10 +631,10 @@ class TestArithmetic:
 
         if CROSS_REFERENCE:  # cast `one` and `zero` as `integer`s before doing the math
 
-            result3 = GF2(int(abs(first)) * int(abs(second)))
+            result3 = gf2(int(abs(first)) * int(abs(second)))
             assert result3 is expected
 
-            result4 = GF2(int(abs(second)) * int(abs(first)))
+            result4 = gf2(int(abs(second)) * int(abs(first)))
             assert result4 is expected
 
     @pytest.mark.parametrize(
@@ -668,7 +668,7 @@ class TestArithmetic:
 
         if CROSS_REFERENCE:  # cast `one` and `zero` as `integer`s before doing the math
 
-            result2 = GF2(operator(int(abs(first)), int(abs(second))))
+            result2 = gf2(operator(int(abs(first)), int(abs(second))))
             assert result2 is expected
 
     @pytest.mark.parametrize(
@@ -698,7 +698,7 @@ class TestArithmetic:
 
         if CROSS_REFERENCE:  # cast `one` and `zero` as `integer`s before doing the math
 
-            result2 = GF2(int(abs(first)) % int(abs(second)))
+            result2 = gf2(int(abs(first)) % int(abs(second)))
             assert result2 is expected
 
     @pytest.mark.parametrize(
@@ -775,7 +775,7 @@ class TestArithmetic:
 
         if CROSS_REFERENCE:  # cast `one` and `zero` as `integer`s before doing the math
 
-            result2 = GF2(int(abs(first)) ** int(abs(second)))
+            result2 = gf2(int(abs(first)) ** int(abs(second)))
             assert result2 is expected
 
     @pytest.mark.parametrize("obj", [one, zero])
@@ -826,7 +826,7 @@ class TestArithmetic:
 )
 def test_can_import_typing_extensions():
     """For Python versions 3.11+ we do not need the "typing-extensions"."""
-    package = importlib.import_module("lalib.elements.gf2")
+    package = importlib.import_module("lalib.elements.galois")
     importlib.reload(package)
 
     assert package.Self is not None

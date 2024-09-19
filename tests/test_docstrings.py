@@ -15,7 +15,7 @@ import xdoctest
     [
         "lalib",
         "lalib.elements",
-        "lalib.elements.gf2",
+        "lalib.elements.galois",
     ],
 )
 def test_docstrings(module):

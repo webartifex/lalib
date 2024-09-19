@@ -9,26 +9,26 @@ Then, use them:
 >>> one + zero
 one
 
->>> GF2(0)
+>>> gf2(0)
 zero
->>> GF2(42)
+>>> gf2(42)
 Traceback (most recent call last):
 ...
 ValueError: ...
->>> GF2(42, strict=False)
+>>> gf2(42, strict=False)
 one
 """
 
-from lalib.elements import gf2
+from lalib.elements import galois
 
 
-GF2, one, zero = gf2.GF2, gf2.one, gf2.zero
+gf2, one, zero = galois.gf2, galois.one, galois.zero
 
-del gf2
+del galois
 
 
 __all__ = (
-    "GF2",
+    "gf2",
     "one",
     "zero",
 )
