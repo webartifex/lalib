@@ -316,7 +316,13 @@ class GF2Element(metaclass=GF2Meta):
         except (TypeError, ValueError):
             return False
         else:
-            return self is other  # `one` and `zero` are singletons
+            # TODO(webartifex): investigate the below issue
+            # https://github.com/webartifex/lalib/issues/1
+            # `one` and `zero` are singletons
+            # => yet, the following does not work with `pytest`
+            #    in Python 3.9 & 3.10: `return self is other`
+            # => for now, use the following fix:
+            return int(self) == int(other)
 
     def __lt__(self, other: object) -> bool:
         """Comparison: `self < other`.
