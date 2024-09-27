@@ -57,6 +57,7 @@ flake8-eradicate = "^1.5"
 flake8-isort = "^6.1"
 flake8-quotes = "^3.4"
 flake8-string-format = "^0.3"
+flake8-todos = "^0.3"
 flake8-pyproject = "^1.2"
 flake8-pytest-style = "^2.0"
 mypy = "^1.11"
@@ -171,6 +172,7 @@ select = [
     "PT",      # flake8-pytest-style => enforce a consistent style with pytest
     "Q",       # flake8-quotes => use double quotes everywhere (complying with black)
     "S",       # flake8-bandit => common security issues
+    "T00",     # flake8-todos => unify TODOs
     "T10",     # flake8-debugger => no debugger usage
 
     # violations not covered by `ruff` below
@@ -355,6 +357,7 @@ select = [
     "PT",      # flake8-pytest-style => enforce a consistent style with pytest
     "Q",       # flake8-quotes => use double quotes everywhere
     "S",       # flake8-bandit => common security issues
+    "TD",      # flake8-todos => unify TODOs
     "T10",     # flake8-debugger => no debugger usage
 
     # violations not covered by `flake8` above

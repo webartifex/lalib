@@ -205,6 +205,7 @@ def lint(session: nox.Session) -> None:
         "flake8-isort",
         "flake8-quotes",
         "flake8-string-format",
+        "flake8-todos",
         "flake8-pyproject",
         "flake8-pytest-style",
         "mypy",
