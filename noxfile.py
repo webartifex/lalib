@@ -230,10 +230,13 @@ TEST_DEPENDENCIES = (
     "packaging",
     "pytest",
     "pytest-cov",
+    "pytest-randomly",
     "semver",
     'typing-extensions; python_version < "3.11"',  # to support Python 3.9 & 3.10
     "xdoctest",
 )
+
+TEST_RANDOM_SEED = "--randomly-seed=42"
 
 
 @nox.session(python=SUPPORTED_PYTHONS)
@@ -250,6 +253,7 @@ def test(session: nox.Session) -> None:
     args = posargs or (
         "--cov",
         "--no-cov-on-fail",
+        TEST_RANDOM_SEED,
         TESTS_LOCATION,
     )
 
@@ -294,6 +298,7 @@ def test_coverage_run(session: nox.Session) -> None:
         "run",
         "-m",
         "pytest",
+        TEST_RANDOM_SEED,
         TESTS_LOCATION,
     )
 
