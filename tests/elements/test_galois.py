@@ -78,11 +78,7 @@ zero_like_values = (
 )
 
 
-def test_thresholds():
-    """Sanity check for the thresholds used in the tests below."""
-    assert utils.WITHIN_THRESHOLD < utils.DEFAULT_THRESHOLD < utils.NOT_WITHIN_THRESHOLD
-
-
+@pytest.mark.overlapping_test
 class TestGF2SubClasses:
     """Test the sub-classes behind `one` and `zero`."""
 
@@ -122,6 +118,7 @@ class TestGF2Casting:
         result = cls(value, strict=False)
         assert result is one
 
+    @pytest.mark.overlapping_test
     @pytest.mark.parametrize("value", non_strict_one_like_values)
     def test_cannot_cast_ones_strictly(self, cls, value):
         """`gf2(value, strict=False)` returns `1`."""
@@ -156,6 +153,7 @@ class TestGF2Casting:
         with pytest.raises(ValueError, match="`1`-like or `0`-like"):
             cls(value, strict=strict)
 
+    @pytest.mark.overlapping_test
     @pytest.mark.parametrize("value", ["abc", (1,), [1]])
     @pytest.mark.parametrize("strict", [True, False])
     def test_cannot_cast_from_wrong_type(self, cls, value, strict):
@@ -163,12 +161,14 @@ class TestGF2Casting:
         with pytest.raises(TypeError):
             cls(value, strict=strict)
 
+    @pytest.mark.overlapping_test
     @pytest.mark.parametrize("strict", [True, False])
     def test_cannot_cast_from_nan_value(self, cls, strict):
         """Cannot create `one` or `zero` from undefined value."""
         with pytest.raises(ValueError, match="`1`-like or `0`-like"):
             cls(float("NaN"), strict=strict)
 
+    @pytest.mark.overlapping_test
     @pytest.mark.parametrize("scaler", [1, 10, 100, 1000])
     def test_get_one_if_within_threshold(self, cls, scaler):
         """`gf2()` returns `one` if `value` is larger than `threshold`."""
@@ -180,6 +180,7 @@ class TestGF2Casting:
         result = cls(value, strict=False, threshold=threshold)
         assert result is one
 
+    @pytest.mark.overlapping_test
     @pytest.mark.parametrize("scaler", [1, 10, 100, 1000])
     @pytest.mark.parametrize("strict", [True, False])
     def test_get_zero_if_within_threshold(self, cls, scaler, strict):
@@ -192,6 +193,7 @@ class TestGF2Casting:
         assert result is zero
 
 
+@pytest.mark.overlapping_test
 @pytest.mark.parametrize("strict", [True, False])
 class TestGF2ConstructorWithoutCastedValue:
     """Test the `gf2` class's constructor.
@@ -220,6 +222,7 @@ class TestGenericBehavior:
         with pytest.raises(RuntimeError, match="internal error"):
             gf2()
 
+    @pytest.mark.overlapping_test
     @pytest.mark.parametrize("cls", [gf2, GF2One, GF2Zero])
     def test_create_singletons(self, cls):
         """Singleton pattern: The classes always return the same instance."""
@@ -227,6 +230,7 @@ class TestGenericBehavior:
         second = cls()
         assert first is second
 
+    @pytest.mark.overlapping_test
     @pytest.mark.parametrize("obj", [one, zero])
     def test_sub_classes_return_objs(self, obj):
         """`type(one)` and `type(zero)` return ...
@@ -239,6 +243,7 @@ class TestGenericBehavior:
         new_obj = sub_cls()
         assert new_obj is obj
 
+    @pytest.mark.overlapping_test
     @pytest.mark.parametrize("obj", [one, zero])
     @pytest.mark.parametrize(
         "type_",
@@ -253,6 +258,7 @@ class TestGenericBehavior:
         """`one` and `zero` are officially `Numbers`s."""
         assert isinstance(obj, type_)
 
+    @pytest.mark.overlapping_test
     @pytest.mark.parametrize("cls", [gf2, GF2One, GF2Zero])
     @pytest.mark.parametrize(
         "method",
@@ -320,14 +326,17 @@ class TestGenericBehavior:
 class TestNumericBehavior:
     """Test how `one` and `zero` behave like numbers."""
 
+    @pytest.mark.overlapping_test
     def test_make_complex(self):
         """`one` and `zero` behave like `1 + 0j` and `0 + 0j`."""
         assert (complex(one), complex(zero)) == (1 + 0j, 0 + 0j)
 
+    @pytest.mark.overlapping_test
     def test_make_float(self):
         """`one` and `zero` behave like `1.0` and `0.0`."""
         assert (float(one), float(zero)) == (1.0, 0.0)
 
+    @pytest.mark.overlapping_test
     @pytest.mark.parametrize("func", [int, hash])
     def test_make_int(self, func):
         """`one` and `zero` behave like `1` and `0`.
@@ -340,6 +349,7 @@ class TestNumericBehavior:
         """`one` and `zero` behave like `True` and `False`."""
         assert (bool(one), bool(zero)) == (True, False)
 
+    @pytest.mark.overlapping_test
     @pytest.mark.parametrize("obj", [one, zero])
     def test_get_abs_value(self, obj):
         """`abs(one)` and `abs(zero)` are `one` and `zero`."""
@@ -366,10 +376,12 @@ class TestNumericBehavior:
         """`one.conjugate()` and `zero.conjugate()` are `1 + 0j` and `0 + 0j`."""
         assert (one.conjugate(), zero.conjugate()) == (1 + 0j, 0 + 0j)
 
+    @pytest.mark.overlapping_test
     def test_one_as_fraction(self):
         """`one.numerator / one.denominator` equals `1`."""
         assert (one.numerator, one.denominator) == (1, 1)
 
+    @pytest.mark.overlapping_test
     def test_zero_as_fraction(self):
         """`one.numerator / one.denominator` equals `0`."""
         assert (zero.numerator, zero.denominator) == (0, 1)
@@ -378,11 +390,13 @@ class TestNumericBehavior:
 class TestComparison:
     """Test `one` and `zero` interact with relational operators."""
 
+    @pytest.mark.overlapping_test
     @pytest.mark.parametrize("obj", [one, zero])
     def test_equal_to_itself(self, obj):
         """`one` and `zero` are equal to themselves."""
         assert obj == obj  # noqa: PLR0124
 
+    @pytest.mark.overlapping_test
     @pytest.mark.parametrize(
         ["first", "second"],
         [
@@ -401,6 +415,7 @@ class TestComparison:
         assert first == second
         assert second == first
 
+    @pytest.mark.overlapping_test
     @pytest.mark.parametrize(
         ["first", "second"],
         [
@@ -418,6 +433,7 @@ class TestComparison:
         assert first != second
         assert second != first
 
+    @pytest.mark.overlapping_test
     @pytest.mark.parametrize(
         ["first", "second"],
         [
@@ -441,27 +457,32 @@ class TestComparison:
         """`one > zero` and `one >= zero`."""
         assert operator(one, zero)
 
+    @pytest.mark.overlapping_test
     @pytest.mark.parametrize("operator", [operator.lt, operator.le])
     def test_one_not_smaller_than_or_equal_to_zero(self, operator):
         """`not one < zero` and `not one <= zero`."""
         assert not operator(one, zero)
 
+    @pytest.mark.overlapping_test
     @pytest.mark.parametrize("operator", [operator.lt, operator.le])
     def test_zero_smaller_than_or_equal_to_one(self, operator):
         """`zero < one` and `zero <= one`."""
         assert operator(zero, one)
 
+    @pytest.mark.overlapping_test
     @pytest.mark.parametrize("operator", [operator.gt, operator.ge])
     def test_zero_not_greater_than_or_equalt_to_one(self, operator):
         """`not zero > one` and `not zero >= one`."""
         assert not operator(zero, one)
 
+    @pytest.mark.overlapping_test
     @pytest.mark.parametrize("obj", [one, zero])
     def test_obj_not_strictly_greater_than_itself(self, obj):
         """`obj >= obj` but not `obj > obj`."""
         assert obj >= obj  # noqa: PLR0124
         assert not obj > obj  # noqa: PLR0124
 
+    @pytest.mark.overlapping_test
     @pytest.mark.parametrize("obj", [one, zero])
     def test_obj_not_strictly_smaller_than_itself(self, obj):
         """`obj <= obj` but not `obj < obj`."""
@@ -579,6 +600,7 @@ class TestArithmetic:
             result4 = gf2(int(abs(second)) * int(abs(first)))
             assert result4 is expected
 
+    @pytest.mark.overlapping_test
     @pytest.mark.parametrize(
         "objs",
         [
@@ -613,6 +635,7 @@ class TestArithmetic:
             result2 = gf2(operator(int(abs(first)), int(abs(second))))
             assert result2 is expected
 
+    @pytest.mark.overlapping_test
     @pytest.mark.parametrize(
         "objs",
         [
@@ -762,6 +785,7 @@ class TestArithmetic:
             operator(42, obj)
 
 
+@pytest.mark.overlapping_test
 @pytest.mark.skipif(
     not sys.version_info < (3, 11),
     reason='"typing-extensions" are installed to support Python 3.9 & 3.10',
@@ -772,3 +796,9 @@ def test_can_import_typing_extensions():
     importlib.reload(package)
 
     assert package.Self is not None
+
+
+@pytest.mark.sanity_test
+def test_thresholds():
+    """Sanity check for the thresholds used in the tests below."""
+    assert utils.WITHIN_THRESHOLD < utils.DEFAULT_THRESHOLD < utils.NOT_WITHIN_THRESHOLD

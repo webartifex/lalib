@@ -11,6 +11,10 @@ import pytest
 from tests.fields import utils
 
 
+# None of the test cases below contributes towards higher coverage
+pytestmark = pytest.mark.integration_test
+
+
 @pytest.mark.repeat(utils.N_RANDOM_DRAWS)
 @pytest.mark.parametrize("field", utils.ALL_FIELDS)
 class TestAllFieldsManyTimes:

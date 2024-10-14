@@ -254,6 +254,14 @@ def test(session: nox.Session) -> None:
     args = posargs or (
         "--cov",
         "--no-cov-on-fail",
+        *(  # If this function is run via the "test-fast" session,
+            (  # the following arguments are added:
+                "--cov-fail-under=100",
+                "--smoke-tests-only",
+            )
+            if session.env.get("_smoke_tests_only")
+            else ()
+        ),
         TEST_RANDOM_SEED,
         TESTS_LOCATION,
     )
@@ -337,6 +345,18 @@ def test_docstrings(session: nox.Session) -> None:
 
     session.run("xdoctest", "--version")
     session.run("xdoctest", "src/lalib")
+
+
+@nox.session(name="test-fast", python=MAIN_PYTHON)
+def test_fast(session: nox.Session) -> None:
+    """Test code with `pytest`, selected (smoke) tests only.
+
+    The (unit) test cases are selected such that their number
+    is minimal but the achieved coverage remains at 100%.
+    """
+    # See implementation notes in `pre_commit_test_hook()` below
+    session.env["_smoke_tests_only"] = "true"
+    test(session)
 
 
 @nox.session(name="clean-cwd", python=MAIN_PYTHON, venv_backend="none")

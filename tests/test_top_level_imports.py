@@ -6,6 +6,7 @@ from typing import Any
 import pytest
 
 
+@pytest.mark.integration_test
 @pytest.mark.parametrize(
     "path_to_package",
     [

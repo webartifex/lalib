@@ -39,6 +39,7 @@ class TestCastAndValidateFieldElements:
     an element of the `field`, and, if so, `.cast()` it as such.
     """
 
+    @pytest.mark.overlapping_test
     @pytest.mark.parametrize("field", utils.NON_10_FIELDS)
     @pytest.mark.parametrize("value", utils.NUMBERS)
     def test_number_is_field_element(self, field, value):
@@ -49,12 +50,14 @@ class TestCastAndValidateFieldElements:
         """
         utils.is_field_element(field, value)
 
+    @pytest.mark.overlapping_test
     @pytest.mark.parametrize("field", utils.ALL_FIELDS)
     @pytest.mark.parametrize("value", utils.ONES_N_ZEROS)
     def test_one_and_zero_number_is_field_element(self, field, value):
         """`1`-like and `0`-like numbers are always `field` elements."""
         utils.is_field_element(field, value)
 
+    @pytest.mark.overlapping_test
     @pytest.mark.parametrize("field", utils.ALL_FIELDS)
     @pytest.mark.parametrize("value", ["abc", (1, 2, 3)])
     def test_non_numeric_value_is_not_field_element(self, field, value):
@@ -93,6 +96,7 @@ class TestDTypes:
         """`field.dtype` must be a `type`."""
         assert isinstance(field.dtype, type)
 
+    @pytest.mark.overlapping_test
     @pytest.mark.parametrize("field", utils.ALL_FIELDS)
     def test_element_is_instance_of_field_dtype(self, field):
         """Elements are an instance of `field.dtype`."""
@@ -100,6 +104,7 @@ class TestDTypes:
 
         assert isinstance(element, field.dtype)
 
+    @pytest.mark.overlapping_test
     @pytest.mark.parametrize("field", utils.ALL_FIELDS)
     def test_element_dtype_is_subclass_of_field_dtype(self, field):
         """Elements may have a more specific `.dtype` than their `field.dtype`."""
@@ -119,6 +124,7 @@ class TestIsZero:
         assert field.zero == value
         assert field.is_zero(value)
 
+    @pytest.mark.overlapping_test
     @pytest.mark.parametrize("field", utils.ALL_FIELDS)
     def test_is_almost_zero(self, field):
         """`value` is within an acceptable threshold of `field.zero`."""
@@ -127,6 +133,7 @@ class TestIsZero:
         assert pytest.approx(field.zero, abs=utils.DEFAULT_THRESHOLD) == value
         assert field.is_zero(value)
 
+    @pytest.mark.overlapping_test
     @pytest.mark.parametrize("field", utils.NON_10_FIELDS)
     def test_is_slightly_not_zero(self, field):
         """`value` is not within an acceptable threshold of `field.zero`."""
@@ -135,6 +142,7 @@ class TestIsZero:
         assert pytest.approx(field.zero, abs=utils.DEFAULT_THRESHOLD) != value
         assert not field.is_zero(value)
 
+    @pytest.mark.overlapping_test
     @pytest.mark.parametrize("field", utils.ALL_FIELDS)
     @pytest.mark.parametrize("value", utils.ONES)
     def test_is_not_zero(self, field, value):
@@ -153,6 +161,7 @@ class TestIsOne:
         assert field.one == value
         assert field.is_one(value)
 
+    @pytest.mark.overlapping_test
     @pytest.mark.parametrize("field", utils.ALL_FIELDS)
     def test_is_almost_one(self, field):
         """`value` is within an acceptable threshold of `field.one`."""
@@ -161,6 +170,7 @@ class TestIsOne:
         assert pytest.approx(field.one, abs=utils.DEFAULT_THRESHOLD) == value
         assert field.is_one(value)
 
+    @pytest.mark.overlapping_test
     @pytest.mark.parametrize("field", utils.NON_10_FIELDS)
     def test_is_slightly_not_one(self, field):
         """`value` is not within an acceptable threshold of `field.one`."""
@@ -169,6 +179,7 @@ class TestIsOne:
         assert pytest.approx(field.one, abs=utils.DEFAULT_THRESHOLD) != value
         assert not field.is_one(value)
 
+    @pytest.mark.overlapping_test
     @pytest.mark.parametrize("field", utils.ALL_FIELDS)
     @pytest.mark.parametrize("value", utils.ZEROS)
     def test_is_not_one(self, field, value):
@@ -193,6 +204,7 @@ class TestDrawRandomFieldElement:
 
         assert field.validate(element)
 
+    @pytest.mark.overlapping_test
     @pytest.mark.parametrize("field", utils.ALL_FIELDS)
     def test_draw_element_with_default_bounds_set_to_none(self, field):
         """Draw a random element from the `field`, ...
@@ -206,6 +218,7 @@ class TestDrawRandomFieldElement:
 
         assert field.validate(element)
 
+    @pytest.mark.overlapping_test
     @pytest.mark.parametrize("field", utils.NON_10_FIELDS)
     def test_draw_element_with_custom_bounds(self, field):
         """Draw a random element from the `field` ...
@@ -242,6 +255,7 @@ class TestDrawRandomFieldElement:
             assert lower <= element2 <= upper
 
 
+@pytest.mark.sanity_test
 def test_numbers():
     """We use `0`, `1`, `+42`, and `-42` in different data types."""
     unique_one_and_zero = {int(n) for n in utils.ONES_N_ZEROS}

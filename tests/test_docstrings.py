@@ -10,6 +10,7 @@ import pytest
 import xdoctest
 
 
+@pytest.mark.integration_test
 @pytest.mark.parametrize(
     "module",
     [

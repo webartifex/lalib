@@ -7,6 +7,10 @@ import pytest
 from lalib import fields
 
 
+# None of the test cases below contributes towards higher coverage
+pytestmark = pytest.mark.overlapping_test
+
+
 Q = fields.Q
 
 
