@@ -292,9 +292,9 @@ class VersionClassification:
         )
 
         if is_so_by_parts:
-            assert parsed_version.is_devrelease is True
-            assert parsed_version.is_prerelease is True
-            assert parsed_version.is_postrelease is False
+            assert parsed_version.is_devrelease
+            assert parsed_version.is_prerelease
+            assert not parsed_version.is_postrelease
 
         return is_so_by_parts
 
@@ -307,9 +307,9 @@ class VersionClassification:
         )
 
         if is_so_by_parts:
-            assert parsed_version.is_devrelease is False
-            assert parsed_version.is_prerelease is True
-            assert parsed_version.is_postrelease is False
+            assert not parsed_version.is_devrelease
+            assert parsed_version.is_prerelease
+            assert not parsed_version.is_postrelease
 
         return is_so_by_parts
 
@@ -322,9 +322,9 @@ class VersionClassification:
         )
 
         if is_so_by_parts:
-            assert parsed_version.is_devrelease is False
-            assert parsed_version.is_prerelease is False
-            assert parsed_version.is_postrelease is False
+            assert not parsed_version.is_devrelease
+            assert not parsed_version.is_prerelease
+            assert not parsed_version.is_postrelease
 
         return is_so_by_parts
 
@@ -337,9 +337,9 @@ class VersionClassification:
         )
 
         if is_so_by_parts:
-            assert parsed_version.is_devrelease is False
-            assert parsed_version.is_prerelease is False
-            assert parsed_version.is_postrelease is True
+            assert not parsed_version.is_devrelease
+            assert not parsed_version.is_prerelease
+            assert parsed_version.is_postrelease
 
         return is_so_by_parts
 
