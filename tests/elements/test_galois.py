@@ -11,6 +11,7 @@ import sys
 
 import pytest
 
+from lalib import config
 from lalib.elements import galois
 
 
@@ -26,17 +27,15 @@ GF2Element, GF2One, GF2Zero = (  # not part of the official API
     type(galois.zero),  # are deleted in `lalib.elements.galois`
 )
 
-_THRESHOLD = galois.THRESHOLD
-
 del galois
 
 
 CROSS_REFERENCE = not os.environ.get("NO_CROSS_REFERENCE")
 
 
-default_threshold = _THRESHOLD
-within_threshold = _THRESHOLD / 10
-not_within_threshold = _THRESHOLD * 10
+default_threshold = config.THRESHOLD
+within_threshold = config.THRESHOLD / 10
+not_within_threshold = config.THRESHOLD * 10
 
 strict_one_like_values = (
     1,

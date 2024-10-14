@@ -43,14 +43,14 @@ except ImportError:  # pragma: no cover to support Python 3.9 & 3.10
     from typing_extensions import Self
 
 
-THRESHOLD = 1e-12
+from lalib import config
 
 
 def _to_gf2(
     value: complex,  # `mypy` reads `complex | float | int`
     *,
     strict: bool = True,
-    threshold: float = THRESHOLD,
+    threshold: float = config.THRESHOLD,
 ) -> int:
     """Cast a number as a possible Galois field value: `1` or `0`.
 
@@ -132,7 +132,7 @@ class GF2Element(metaclass=GF2Meta):
         value: object = None,
         *,
         strict: bool = True,
-        threshold: float = THRESHOLD,
+        threshold: float = config.THRESHOLD,
     ) -> Self:
         """See docstring for `.__init__()`."""
         if isinstance(value, cls):
@@ -162,7 +162,7 @@ class GF2Element(metaclass=GF2Meta):
         value: object = None,
         *,
         strict: bool = True,
-        threshold: float = THRESHOLD,
+        threshold: float = config.THRESHOLD,
     ) -> None:
         """Obtain one of two objects: `one` or `zero`.
 
@@ -242,7 +242,7 @@ class GF2Element(metaclass=GF2Meta):
         """Round `self` up to the next `int`: `math.ceil(self)`."""
         return int(self)
 
-    def __round__(self, ndigits: Optional[int] = 0) -> int:
+    def __round__(self, _ndigits: int = config.NDIGITS) -> int:
         """Round `self` to the next `int`: `round(self)`."""
         return int(self)
 
@@ -556,3 +556,5 @@ gf2 = GF2Element
 del GF2Meta
 del GF2One
 del GF2Zero
+
+del config
