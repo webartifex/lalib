@@ -6,9 +6,9 @@ import os
 
 import pytest
 
-from lalib import config
 from lalib import elements
 from lalib import fields
+from tests import utils as root_utils
 
 
 ALL_FIELDS = (fields.Q, fields.R, fields.C, fields.GF2)
@@ -48,9 +48,9 @@ NON_ONES_N_ZEROS = (
 
 NUMBERS = ONES_N_ZEROS + NON_ONES_N_ZEROS
 
-DEFAULT_THRESHOLD = config.THRESHOLD
-WITHIN_THRESHOLD = config.THRESHOLD / 10
-NOT_WITHIN_THRESHOLD = config.THRESHOLD * 10
+DEFAULT_THRESHOLD = root_utils.DEFAULT_THRESHOLD
+WITHIN_THRESHOLD = root_utils.WITHIN_THRESHOLD
+NOT_WITHIN_THRESHOLD = root_utils.NOT_WITHIN_THRESHOLD
 
 N_RANDOM_DRAWS = os.environ.get("N_RANDOM_DRAWS") or 1
 
