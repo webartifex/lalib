@@ -16,6 +16,12 @@ import xdoctest
         "lalib",
         "lalib.elements",
         "lalib.elements.galois",
+        "lalib.fields",
+        "lalib.fields.base",
+        "lalib.fields.complex_",
+        "lalib.fields.galois",
+        "lalib.fields.rational",
+        "lalib.fields.real",
     ],
 )
 def test_docstrings(module):

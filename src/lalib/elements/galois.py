@@ -314,7 +314,7 @@ class GF2Element(metaclass=GF2Meta):
         try:
             other = GF2Element(other)
         except (TypeError, ValueError):
-            return False
+            return NotImplemented
         else:
             # TODO(webartifex): investigate the below issue
             # https://github.com/webartifex/lalib/issues/1

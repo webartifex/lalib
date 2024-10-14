@@ -231,6 +231,7 @@ TEST_DEPENDENCIES = (
     "pytest",
     "pytest-cov",
     "pytest-randomly",
+    "pytest-repeat",
     "semver",
     'typing-extensions; python_version < "3.11"',  # to support Python 3.9 & 3.10
     "xdoctest",
@@ -290,6 +291,7 @@ def test_coverage_run(session: nox.Session) -> None:
     session.install(".")
     install_pinned(session, "coverage", *TEST_DEPENDENCIES)
 
+    session.env["N_RANDOM_DRAWS"] = "10"
     session.env["NO_CROSS_REFERENCE"] = "true"
     session.run(
         "python",
