@@ -48,6 +48,7 @@ from lalib import config
 
 def _to_gf2(
     value: complex,  # `mypy` reads `complex | float | int`
+    /,
     *,
     strict: bool = True,
     threshold: float = config.THRESHOLD,
@@ -160,6 +161,7 @@ class GF2Element(metaclass=GF2Meta):
     def __init__(
         self,
         value: object = None,
+        /,
         *,
         strict: bool = True,
         threshold: float = config.THRESHOLD,
