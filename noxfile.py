@@ -57,7 +57,7 @@ def load_supported_python_versions(*, reverse: bool = False) -> list[str]:
 
 
 SUPPORTED_PYTHONS = load_supported_python_versions(reverse=True)
-MAIN_PYTHON = "3.12"
+MAIN_PYTHON = "3.13"
 
 DOCS_SRC, DOCS_BUILD = ("docs/", ".cache/docs/")
 TESTS_LOCATION = "tests/"
@@ -460,7 +460,7 @@ def start(session: nox.Session) -> None:
     session.env["PIP_CACHE_DIR"] = ".cache/pip"
     session.env["PIP_DISABLE_PIP_VERSION_CHECK"] = "true"
 
-    if session.python in ("3.12", "3.11"):
+    if session.python in ("3.13", "3.12", "3.11"):
         session.env["PRAGMA_SUPPORT_39_N_310"] = "to support Python 3.9 & 3.10"
     else:
         session.env["PRAGMA_SUPPORT_39_N_310"] = f"{_magic_number =}"
