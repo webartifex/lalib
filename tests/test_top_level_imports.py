@@ -12,6 +12,7 @@ import pytest
     [
         "lalib",
         "lalib.elements",
+        "lalib.fields",
     ],
 )
 def test_top_level_imports(path_to_package: str):
