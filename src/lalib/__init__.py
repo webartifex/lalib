@@ -23,6 +23,7 @@ one
 from importlib import metadata
 
 from lalib import elements
+from lalib import fields
 
 
 try:
@@ -42,8 +43,11 @@ else:
 
 gf2, one, zero = elements.gf2, elements.one, elements.zero
 
+Q, R, C, GF2 = fields.Q, fields.R, fields.C, fields.GF2
+
 
 del elements
+del fields
 del metadata
 
 
@@ -51,4 +55,8 @@ __all__ = (
     "gf2",
     "one",
     "zero",
+    "Q",
+    "R",
+    "C",
+    "GF2",
 )
