@@ -26,7 +26,7 @@ class Field(abc.ABC, Generic[T]):
         return self._dtype(value, **kwargs)
 
     @staticmethod
-    def _post_cast_filter(possible_element: T, /) -> bool:
+    def _post_cast_filter(possible_element: T, /) -> bool:  # noqa: ARG004
         """Function to filter out castable `value`s.
 
         Called after a successfull call of the `._cast_func()`.

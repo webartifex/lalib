@@ -208,6 +208,7 @@ def lint(session: nox.Session) -> None:
         "flake8-todos",
         "flake8-pyproject",
         "flake8-pytest-style",
+        "flake8-unused-arguments",
         "mypy",
         "pep8-naming",  # flake8 plug-in
         "pydoclint[flake8]",

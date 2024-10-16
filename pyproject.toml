@@ -61,6 +61,7 @@ flake8-string-format = "^0.3"
 flake8-todos = "^0.3"
 flake8-pyproject = "^1.2"
 flake8-pytest-style = "^2.0"
+flake8-unused-arguments = "^0.0"
 mypy = "^1.11"
 pep8-naming = "^0.14"  # flake8 plug-in
 pydoclint = { extras = ["flake8"], version = "^0.5" }
@@ -177,6 +178,7 @@ select = [
     "S",       # flake8-bandit => common security issues
     "T00",     # flake8-todos => unify TODOs
     "T10",     # flake8-debugger => no debugger usage
+    "U100",    # flake8-unused-arguments => declared function arguments must be used
 
     # violations not covered by `ruff` below
 
@@ -254,6 +256,12 @@ avoid-escape = true
 docstring-quotes = "double"
 inline-quotes = "double"
 multiline-quotes = "double"
+
+# Plug-in: flake8-unused-arguments
+# Source: https://github.com/nhoad/flake8-unused-arguments
+# Make flake8-unused-arguments behave like ruff's "ARG" error code
+unused-arguments-ignore-abstract-functions = true
+unused-arguments-ignore-stub-functions = true
 
 
 
@@ -347,6 +355,7 @@ select = [
     # violations also covered by `flake8` above
 
     "ANN",     # flake8-annotations => enforce type checking for functions
+    "ARG",     # flake8-unused-arguments => declared function arguments must be used
     "B",       # flake8-bugbear => bugs and design flaws
     "C4",      # flake8-comprehensions => better comprehensions
     "C90",     # mccabe => cyclomatic complexity

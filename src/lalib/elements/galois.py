@@ -109,7 +109,7 @@ def _to_gf2(
 class GF2Meta(abc.ABCMeta):
     """Make data type of `one` and `zero` appear to be `gf2`."""
 
-    def __repr__(cls) -> str:
+    def __repr__(cls) -> str:  # noqa: RUF100,U100
         """Text representation for `GF2Element` and sub-classes."""
         return "gf2"
 
