@@ -21,6 +21,14 @@ zero
 >>> 0 * zero
 zero
 
+Yet, for numbers not equal to `1` or `0`, this does not work:
+
+>>> one + 42
+Traceback (most recent call last):
+...
+ValueError: ...
+
+
 Further usage explanations of `one` and `zero`
 can be found in the various docstrings of the `GF2Element` class.
 
@@ -48,8 +56,8 @@ def _to_gf2(
     value: complex,  # `mypy` reads `complex | float | int`
     /,
     *,
-    strict: bool = True,
-    threshold: float = config.THRESHOLD,
+    strict: bool,
+    threshold: float,
 ) -> int:
     """Cast a number as a possible Galois field value: `1` or `0`.
 
@@ -98,7 +106,7 @@ def _to_gf2(
         msg = "`value` must be either `1`-like or `0`-like"
         raise ValueError(msg)
 
-    if abs(value) < threshold:
+    if abs(value) < threshold and not math.isinf(value):
         return 0
 
     return 1
@@ -129,8 +137,9 @@ class GF2Element(metaclass=GF2Meta):
     def __new__(
         cls: type[Self],
         value: object = None,
+        /,
         *,
-        strict: bool = True,
+        strict: bool = False,
         threshold: float = config.THRESHOLD,
     ) -> Self:
         """See docstring for `.__init__()`."""
@@ -146,8 +155,8 @@ class GF2Element(metaclass=GF2Meta):
                 except KeyError:
                     msg = "Must create `one` and `zero` first (internal error)"
                     raise RuntimeError(msg) from None
-        else:
-            value = _to_gf2(value, strict=strict, threshold=threshold)  # type: ignore[arg-type]
+
+        value = _to_gf2(value, strict=strict, threshold=threshold)  # type: ignore[arg-type]
 
         try:
             return cls._instances[value]
@@ -308,11 +317,14 @@ class GF2Element(metaclass=GF2Meta):
         True
         >>> one != zero
         True
+
         >>> one == 1
         True
+        >>> one == 42
+        False
         """
         try:
-            other = GF2Element(other)
+            other = GF2Element(other, strict=True)
         except (TypeError, ValueError):
             return NotImplemented
         else:
@@ -333,11 +345,19 @@ class GF2Element(metaclass=GF2Meta):
         True
         >>> one < one
         False
+
         >>> 0 < one
         True
+
+        The `other` object must be either `1`-like or `0`-like:
+
+        >>> one < 42
+        Traceback (most recent call last):
+        ...
+        ValueError: ...
         """
         try:
-            other = GF2Element(other)
+            other = GF2Element(other, strict=True)
         except TypeError:
             return NotImplemented
         except ValueError:
@@ -357,8 +377,16 @@ class GF2Element(metaclass=GF2Meta):
         True
         >>> one <= zero
         False
+
         >>> zero <= 1
         True
+
+        The `other` object must be either `1`-like or `0`-like:
+
+        >>> zero <= 42
+        Traceback (most recent call last):
+        ...
+        ValueError: ...
         """
         # The `numbers.Rational` abstract base class requires both
         # `.__lt__()` and `.__le__()` to be present alongside
@@ -377,7 +405,7 @@ class GF2Element(metaclass=GF2Meta):
         along the way.
         """
         try:
-            other = GF2Element(other)
+            other = GF2Element(other, strict=True)
         except TypeError:
             return NotImplemented
         except ValueError:
@@ -413,10 +441,18 @@ class GF2Element(metaclass=GF2Meta):
         one
         >>> zero - one
         one
+
         >>> zero + 0
         zero
         >>> 1 + one
         zero
+
+        The `other` object must be either `1`-like or `0`-like:
+
+        >>> zero + 42
+        Traceback (most recent call last):
+        ...
+        ValueError: ...
         """
         return self._compute(other, lambda s, o: (s + o) % 2)
 
@@ -435,8 +471,16 @@ class GF2Element(metaclass=GF2Meta):
         one
         >>> zero * one
         zero
+
         >>> 0 * one
         zero
+
+        The `other` object must be either `1`-like or `0`-like:
+
+        >>> one * 42
+        Traceback (most recent call last):
+        ...
+        ValueError: ...
         """
         return self._compute(other, lambda s, o: s * o)
 
@@ -453,12 +497,21 @@ class GF2Element(metaclass=GF2Meta):
         one
         >>> zero // one
         zero
+
         >>> one / zero
         Traceback (most recent call last):
         ...
         ZeroDivisionError: ...
+
         >>> 1 // one
         one
+
+        The `other` object must be either `1`-like or `0`-like:
+
+        >>> 42 / one
+        Traceback (most recent call last):
+        ...
+        ValueError: ...
         """
         return self._compute(other, lambda s, o: s / o)
 
@@ -484,12 +537,21 @@ class GF2Element(metaclass=GF2Meta):
         zero
         >>> zero % one
         zero
+
         >>> one % zero
         Traceback (most recent call last):
         ...
         ZeroDivisionError: ...
+
         >>> 1 % one
         zero
+
+        The `other` object must be either `1`-like or `0`-like:
+
+        >>> 42 % one
+        Traceback (most recent call last):
+        ...
+        ValueError: ...
         """
         return self._compute(other, lambda s, o: s % o)
 
@@ -513,8 +575,16 @@ class GF2Element(metaclass=GF2Meta):
         zero
         >>> one ** zero
         one
+
         >>> 1 ** one
         one
+
+        The `other` object must be either `1`-like or `0`-like:
+
+        >>> 42 ** one
+        Traceback (most recent call last):
+        ...
+        ValueError: ...
         """
         return self._compute(other, lambda s, o: s**o)
 

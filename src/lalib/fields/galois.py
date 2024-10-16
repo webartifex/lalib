@@ -3,6 +3,7 @@
 import random
 from typing import Any
 
+from lalib import config
 from lalib.elements import galois as gf2_elements
 from lalib.fields import base
 from lalib.fields import utils
@@ -13,6 +14,18 @@ class GaloisField2(utils.SingletonMixin, base.Field):
 
     _math_name = "GF2"
     _dtype = gf2_elements.GF2Element
+
+    def _cast_func(
+        self,
+        value: Any,
+        /,
+        *,
+        strict: bool = True,
+        threshold: float = config.THRESHOLD,
+        **_kwargs: Any,
+    ) -> gf2_elements.GF2Element:
+        return gf2_elements.gf2(value, strict=strict, threshold=threshold)
+
     _additive_identity = gf2_elements.zero
     _multiplicative_identity = gf2_elements.one
 

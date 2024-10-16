@@ -115,16 +115,16 @@ class TestGF2Casting:
     @pytest.mark.parametrize("value", one_like_values)
     def test_cast_ones_not_strictly(self, cls, value):
         """`gf2(value, strict=False)` returns `one`."""
-        result = cls(value, strict=False)
-        assert result is one
+        result1 = cls(value)
+        assert result1 is one
+
+        result2 = cls(value, strict=False)
+        assert result2 is one
 
     @pytest.mark.overlapping_test
     @pytest.mark.parametrize("value", non_strict_one_like_values)
     def test_cannot_cast_ones_strictly(self, cls, value):
-        """`gf2(value, strict=False)` returns `1`."""
-        with pytest.raises(ValueError, match="`1`-like or `0`-like"):
-            cls(value)
-
+        """`gf2(value, strict=True)` needs strict `1`-like values."""
         with pytest.raises(ValueError, match="`1`-like or `0`-like"):
             cls(value, strict=True)
 

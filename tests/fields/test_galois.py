@@ -33,20 +33,31 @@ class TestCastAndValidateFieldElements:
         utils.is_field_element(GF2, value)
 
     @pytest.mark.parametrize("pre_value", [1, 0])
-    def test_complex_number_is_field_element(self, pre_value):
-        """By design, `GF2` can process `complex` numbers."""
+    def test_one_or_zero_like_complex_number_is_field_element(self, pre_value):
+        """`GF2` can process `complex` numbers."""
         value = complex(pre_value, 0)
         utils.is_field_element(GF2, value)
 
     @pytest.mark.parametrize("pre_value", [+42, -42])
-    def test_complex_number_is_not_field_element(self, pre_value):
-        """By design, `GF2` can process `complex` numbers ...
+    def test_non_one_or_zero_like_complex_number_is_not_field_element(self, pre_value):
+        """`GF2` can process `complex` numbers ...
 
         ... but they must be `one`-like or `zero`-like
         to become a `GF2` element.
         """
         value = complex(pre_value, 0)
         utils.is_not_field_element(GF2, value)
+
+    @pytest.mark.parametrize("pre_value", [+42, -42])
+    def test_non_one_or_zero_like_complex_number_is_field_element(self, pre_value):
+        """`GF2` can process all `complex` numbers in non-`strict` mode."""
+        value = complex(pre_value, 0)
+
+        left = GF2.cast(value, strict=False)
+        right = bool(value)
+
+        assert left == right
+        assert GF2.validate(value, strict=False)
 
     @pytest.mark.parametrize("pre_value", ["NaN", "+inf", "-inf"])
     def test_non_finite_complex_number_is_not_field_element(self, pre_value):
@@ -56,6 +67,36 @@ class TestCastAndValidateFieldElements:
         with a non-finite `.real` part.
         """
         value = complex(pre_value)
+        utils.is_not_field_element(GF2, value)
+
+    @pytest.mark.parametrize("value", ["1", "0"])
+    def test_one_or_zero_like_numeric_str_is_field_element(self, value):
+        """`GF2` can process `str`ings resemling `1`s and `0`s."""
+        utils.is_field_element(GF2, value)
+
+    @pytest.mark.parametrize("value", ["+42", "-42"])
+    def test_non_one_or_zero_like_numeric_str_is_not_field_element(self, value):
+        """`GF2` can process `str`ings resembling numbers ...
+
+        ... but they must be `1`-like or `0`-like.
+        """
+        utils.is_not_field_element(GF2, value)
+
+    @pytest.mark.parametrize("value", ["+42", "-42"])
+    def test_non_one_or_zero_like_numeric_str_is_field_element(self, value):
+        """`GF2` can process `str`ings resemling any number in non-`strict` mode."""
+        left = GF2.cast(value, strict=False)
+        right = bool(float(value))
+
+        assert left == right
+        assert GF2.validate(value, strict=False)
+
+    @pytest.mark.parametrize("value", ["NaN", "+inf", "-inf"])
+    def test_non_finite_numeric_str_is_not_field_element(self, value):
+        """`GF2` can process `str`ings resemling numbers ...
+
+        ... but they must represent finite numbers.
+        """
         utils.is_not_field_element(GF2, value)
 
 
