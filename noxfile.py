@@ -57,7 +57,7 @@ def load_supported_python_versions(*, reverse: bool = False) -> list[str]:
 
 
 SUPPORTED_PYTHONS = load_supported_python_versions(reverse=True)
-MAIN_PYTHON = "3.12"
+MAIN_PYTHON = "3.13"
 
 DOCS_SRC, DOCS_BUILD = ("docs/", ".cache/docs/")
 TESTS_LOCATION = "tests/"
@@ -205,8 +205,10 @@ def lint(session: nox.Session) -> None:
         "flake8-isort",
         "flake8-quotes",
         "flake8-string-format",
+        "flake8-todos",
         "flake8-pyproject",
         "flake8-pytest-style",
+        "flake8-unused-arguments",
         "mypy",
         "pep8-naming",  # flake8 plug-in
         "pydoclint[flake8]",
@@ -229,10 +231,14 @@ TEST_DEPENDENCIES = (
     "packaging",
     "pytest",
     "pytest-cov",
+    "pytest-randomly",
+    "pytest-repeat",
     "semver",
     'typing-extensions; python_version < "3.11"',  # to support Python 3.9 & 3.10
     "xdoctest",
 )
+
+TEST_RANDOM_SEED = "--randomly-seed=42"
 
 
 @nox.session(python=SUPPORTED_PYTHONS)
@@ -249,6 +255,15 @@ def test(session: nox.Session) -> None:
     args = posargs or (
         "--cov",
         "--no-cov-on-fail",
+        *(  # If this function is run via the "test-fast" session,
+            (  # the following arguments are added:
+                "--cov-fail-under=100",
+                "--smoke-tests-only",
+            )
+            if session.env.get("_smoke_tests_only")
+            else ()
+        ),
+        TEST_RANDOM_SEED,
         TESTS_LOCATION,
     )
 
@@ -285,6 +300,7 @@ def test_coverage_run(session: nox.Session) -> None:
     session.install(".")
     install_pinned(session, "coverage", *TEST_DEPENDENCIES)
 
+    session.env["N_RANDOM_DRAWS"] = "10"
     session.env["NO_CROSS_REFERENCE"] = "true"
     session.run(
         "python",
@@ -293,6 +309,7 @@ def test_coverage_run(session: nox.Session) -> None:
         "run",
         "-m",
         "pytest",
+        TEST_RANDOM_SEED,
         TESTS_LOCATION,
     )
 
@@ -329,6 +346,18 @@ def test_docstrings(session: nox.Session) -> None:
 
     session.run("xdoctest", "--version")
     session.run("xdoctest", "src/lalib")
+
+
+@nox.session(name="test-fast", python=MAIN_PYTHON)
+def test_fast(session: nox.Session) -> None:
+    """Test code with `pytest`, selected (smoke) tests only.
+
+    The (unit) test cases are selected such that their number
+    is minimal but the achieved coverage remains at 100%.
+    """
+    # See implementation notes in `pre_commit_test_hook()` below
+    session.env["_smoke_tests_only"] = "true"
+    test(session)
 
 
 @nox.session(name="clean-cwd", python=MAIN_PYTHON, venv_backend="none")
@@ -432,7 +461,7 @@ def start(session: nox.Session) -> None:
     session.env["PIP_CACHE_DIR"] = ".cache/pip"
     session.env["PIP_DISABLE_PIP_VERSION_CHECK"] = "true"
 
-    if session.python in ("3.12", "3.11"):
+    if session.python in ("3.13", "3.12", "3.11"):
         session.env["PRAGMA_SUPPORT_39_N_310"] = "to support Python 3.9 & 3.10"
     else:
         session.env["PRAGMA_SUPPORT_39_N_310"] = f"{_magic_number =}"

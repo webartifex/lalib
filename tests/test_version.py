@@ -236,36 +236,7 @@ INVALID_NOT_SEMANTIC = (
 INVALID_VERSIONS = INVALID_NOT_READABLE + INVALID_NOT_SEMANTIC
 
 
-@pytest.mark.parametrize(
-    ["version1", "version2"],
-    zip(  # loop over pairs of neighboring elements
-        VALID_AND_NORMALIZED_VERSIONS,
-        VALID_AND_NORMALIZED_VERSIONS[1:],
-    ),
-)
-def test_versions_are_strictly_ordered(version1, version2):
-    """`VALID_AND_NORMALIZED_VERSIONS` are ordered."""
-    version1_parsed = pkg_version.Version(version1)
-    version2_parsed = pkg_version.Version(version2)
-
-    assert version1_parsed < version2_parsed
-
-
-@pytest.mark.parametrize(
-    ["version1", "version2"],
-    zip(  # loop over pairs of neighboring elements
-        VALID_AND_NOT_NORMALIZED_VERSIONS,
-        VALID_AND_NOT_NORMALIZED_VERSIONS[1:],
-    ),
-)
-def test_versions_are_weakly_ordered(version1, version2):
-    """`VALID_AND_NOT_NORMALIZED_VERSIONS` are ordered."""
-    version1_parsed = pkg_version.Version(version1)
-    version2_parsed = pkg_version.Version(version2)
-
-    assert version1_parsed <= version2_parsed
-
-
+@pytest.mark.overlapping_test
 class VersionClassification:
     """Classifying version identifiers.
 
@@ -292,9 +263,9 @@ class VersionClassification:
         )
 
         if is_so_by_parts:
-            assert parsed_version.is_devrelease is True
-            assert parsed_version.is_prerelease is True
-            assert parsed_version.is_postrelease is False
+            assert parsed_version.is_devrelease
+            assert parsed_version.is_prerelease
+            assert not parsed_version.is_postrelease
 
         return is_so_by_parts
 
@@ -307,9 +278,9 @@ class VersionClassification:
         )
 
         if is_so_by_parts:
-            assert parsed_version.is_devrelease is False
-            assert parsed_version.is_prerelease is True
-            assert parsed_version.is_postrelease is False
+            assert not parsed_version.is_devrelease
+            assert parsed_version.is_prerelease
+            assert not parsed_version.is_postrelease
 
         return is_so_by_parts
 
@@ -322,9 +293,9 @@ class VersionClassification:
         )
 
         if is_so_by_parts:
-            assert parsed_version.is_devrelease is False
-            assert parsed_version.is_prerelease is False
-            assert parsed_version.is_postrelease is False
+            assert not parsed_version.is_devrelease
+            assert not parsed_version.is_prerelease
+            assert not parsed_version.is_postrelease
 
         return is_so_by_parts
 
@@ -337,13 +308,14 @@ class VersionClassification:
         )
 
         if is_so_by_parts:
-            assert parsed_version.is_devrelease is False
-            assert parsed_version.is_prerelease is False
-            assert parsed_version.is_postrelease is True
+            assert not parsed_version.is_devrelease
+            assert not parsed_version.is_prerelease
+            assert parsed_version.is_postrelease
 
         return is_so_by_parts
 
 
+@pytest.mark.overlapping_test
 class TestVersionIdentifier(VersionClassification):
     """The versions must comply with PEP440 ...
 
@@ -504,6 +476,7 @@ class TestVersionIdentifier(VersionClassification):
         assert parsed_version.public != unparsed_version
 
 
+@pytest.mark.overlapping_test
 class TestVersionIdentifierWithPattern:
     """Test the versioning with a custom `regex` pattern."""
 
@@ -585,3 +558,36 @@ class TestUnavailablePackageMetadata:
         with self.hide_metadata_from_package("lalib") as lalib_pkg:
             assert lalib_pkg.__pkg_name__ == "unknown"
             assert lalib_pkg.__version__ == "unknown"
+
+
+@pytest.mark.sanity_test
+class TestSampleVersionData:
+    """Ensure the `VALID_*_VERSIONS` are in order."""
+
+    @pytest.mark.parametrize(
+        ["version1", "version2"],
+        zip(  # loop over pairs of neighboring elements
+            VALID_AND_NORMALIZED_VERSIONS,
+            VALID_AND_NORMALIZED_VERSIONS[1:],
+        ),
+    )
+    def test_versions_are_strictly_ordered(self, version1, version2):
+        """`VALID_AND_NORMALIZED_VERSIONS` are ordered."""
+        version1_parsed = pkg_version.Version(version1)
+        version2_parsed = pkg_version.Version(version2)
+
+        assert version1_parsed < version2_parsed
+
+    @pytest.mark.parametrize(
+        ["version1", "version2"],
+        zip(  # loop over pairs of neighboring elements
+            VALID_AND_NOT_NORMALIZED_VERSIONS,
+            VALID_AND_NOT_NORMALIZED_VERSIONS[1:],
+        ),
+    )
+    def test_versions_are_weakly_ordered(self, version1, version2):
+        """`VALID_AND_NOT_NORMALIZED_VERSIONS` are ordered."""
+        version1_parsed = pkg_version.Version(version1)
+        version2_parsed = pkg_version.Version(version2)
+
+        assert version1_parsed <= version2_parsed

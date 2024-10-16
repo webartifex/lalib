@@ -89,7 +89,7 @@ To execute all default tasks, simply invoke:
 `nox`
 
 This includes running the test suite for the project's main Python version
-    (i.e., [3.12](https://devguide.python.org/versions/)).
+    (i.e., [3.13](https://devguide.python.org/versions/)).
 
 
 #### Code Formatting & Linting

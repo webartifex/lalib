@@ -10,12 +10,19 @@ import pytest
 import xdoctest
 
 
+@pytest.mark.integration_test
 @pytest.mark.parametrize(
     "module",
     [
         "lalib",
         "lalib.elements",
-        "lalib.elements.gf2",
+        "lalib.elements.galois",
+        "lalib.fields",
+        "lalib.fields.base",
+        "lalib.fields.complex_",
+        "lalib.fields.galois",
+        "lalib.fields.rational",
+        "lalib.fields.real",
     ],
 )
 def test_docstrings(module):

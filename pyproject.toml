@@ -16,6 +16,7 @@ classifiers = [
     "Programming Language :: Python :: 3.10",
     "Programming Language :: Python :: 3.11",
     "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
 ]
 description = "A Python library to study linear algebra"
 license = "MIT"
@@ -57,8 +58,10 @@ flake8-eradicate = "^1.5"
 flake8-isort = "^6.1"
 flake8-quotes = "^3.4"
 flake8-string-format = "^0.3"
+flake8-todos = "^0.3"
 flake8-pyproject = "^1.2"
 flake8-pytest-style = "^2.0"
+flake8-unused-arguments = "^0.0"
 mypy = "^1.11"
 pep8-naming = "^0.14"  # flake8 plug-in
 pydoclint = { extras = ["flake8"], version = "^0.5" }
@@ -76,6 +79,8 @@ coverage = "^7.6"
 packaging = "^24.1"  # to test the version identifier
 pytest = "^8.3"
 pytest-cov = "^5.0"
+pytest-randomly = "^3.15"
+pytest-repeat = "^0.9"
 semver = "^3.0"  # to test the version identifier
 tomli = [ { python = "<3.11", version = "^2.0" } ]
 xdoctest = { extras = ["colors"], version = "^1.2" }
@@ -171,7 +176,9 @@ select = [
     "PT",      # flake8-pytest-style => enforce a consistent style with pytest
     "Q",       # flake8-quotes => use double quotes everywhere (complying with black)
     "S",       # flake8-bandit => common security issues
+    "T00",     # flake8-todos => unify TODOs
     "T10",     # flake8-debugger => no debugger usage
+    "U100",    # flake8-unused-arguments => declared function arguments must be used
 
     # violations not covered by `ruff` below
 
@@ -249,6 +256,12 @@ avoid-escape = true
 docstring-quotes = "double"
 inline-quotes = "double"
 multiline-quotes = "double"
+
+# Plug-in: flake8-unused-arguments
+# Source: https://github.com/nhoad/flake8-unused-arguments
+# Make flake8-unused-arguments behave like ruff's "ARG" error code
+unused-arguments-ignore-abstract-functions = true
+unused-arguments-ignore-stub-functions = true
 
 
 
@@ -342,6 +355,7 @@ select = [
     # violations also covered by `flake8` above
 
     "ANN",     # flake8-annotations => enforce type checking for functions
+    "ARG",     # flake8-unused-arguments => declared function arguments must be used
     "B",       # flake8-bugbear => bugs and design flaws
     "C4",      # flake8-comprehensions => better comprehensions
     "C90",     # mccabe => cyclomatic complexity
@@ -355,6 +369,7 @@ select = [
     "PT",      # flake8-pytest-style => enforce a consistent style with pytest
     "Q",       # flake8-quotes => use double quotes everywhere
     "S",       # flake8-bandit => common security issues
+    "TD",      # flake8-todos => unify TODOs
     "T10",     # flake8-debugger => no debugger usage
 
     # violations not covered by `flake8` above
@@ -376,6 +391,8 @@ extend-ignore = [  # never check the following codes
     "E203", "E701",  # "E704" and "W503" do not exist for `ruff`
 
 ]
+
+allowed-confusables = ["ℂ", "ℝ", "ℚ"]
 
 
 [tool.ruff.lint.flake8-pytest-style]  # aligned with [tool.flake8] above

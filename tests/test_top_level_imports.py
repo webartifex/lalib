@@ -6,11 +6,13 @@ from typing import Any
 import pytest
 
 
+@pytest.mark.integration_test
 @pytest.mark.parametrize(
     "path_to_package",
     [
         "lalib",
         "lalib.elements",
+        "lalib.fields",
     ],
 )
 def test_top_level_imports(path_to_package: str):
