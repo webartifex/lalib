@@ -32,9 +32,7 @@ import abc
 import functools
 import math
 import numbers
-
-# When giving up support for Python 3.9, we can get rid of `Optional`
-from typing import Callable, ClassVar, Literal, Optional
+from typing import Callable, ClassVar, Literal
 
 
 try:
@@ -502,7 +500,7 @@ class GF2Element(metaclass=GF2Meta):
         """
         return self._compute(other, lambda s, o: o % s)
 
-    def __pow__(self, other: object, _modulo: Optional[object] = None) -> Self:
+    def __pow__(self, other: object, _modulo: object = None) -> Self:
         """Exponentiation: `self ** other`.
 
         Powers of `gf2` values are like powers of `int`s.
@@ -520,7 +518,7 @@ class GF2Element(metaclass=GF2Meta):
         """
         return self._compute(other, lambda s, o: s**o)
 
-    def __rpow__(self, other: object, _modulo: Optional[object] = None) -> Self:
+    def __rpow__(self, other: object, _modulo: object = None) -> Self:
         """(Reflected) Exponentiation: `other ** self`.
 
         See docstring for `.__pow__()`.
