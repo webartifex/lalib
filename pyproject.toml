@@ -109,7 +109,7 @@ remove-unused-variables = true
 # Source: https://black.readthedocs.io/en/stable/usage_and_configuration/the_basics.html
 
 line-length = 88
-target-version = ["py312", "py311", "py310", "py39"]
+target-version = ["py313", "py312", "py311", "py310", "py39"]
 
 
 
