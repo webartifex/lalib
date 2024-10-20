@@ -357,6 +357,7 @@ def test_fast(session: nox.Session) -> None:
     """
     # See implementation notes in `pre_commit_test_hook()` below
     session.env["_smoke_tests_only"] = "true"
+    session.env["NO_CROSS_REFERENCE"] = "true"
     test(session)
 
 

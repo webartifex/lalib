@@ -349,7 +349,6 @@ class TestNumericBehavior:
         """`one` and `zero` behave like `True` and `False`."""
         assert (bool(one), bool(zero)) == (True, False)
 
-    @pytest.mark.overlapping_test
     @pytest.mark.parametrize("obj", [one, zero])
     def test_get_abs_value(self, obj):
         """`abs(one)` and `abs(zero)` are `one` and `zero`."""
