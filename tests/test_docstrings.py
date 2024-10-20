@@ -15,6 +15,7 @@ import xdoctest
     "module",
     [
         "lalib",
+        "lalib.domains",
         "lalib.elements",
         "lalib.elements.galois",
         "lalib.fields",
