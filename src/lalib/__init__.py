@@ -22,6 +22,7 @@ one
 
 from importlib import metadata
 
+from lalib import domains
 from lalib import elements
 from lalib import fields
 
@@ -41,17 +42,21 @@ else:
     del pkg_info
 
 
+Domain = domains.Domain
+
 gf2, one, zero = elements.gf2, elements.one, elements.zero
 
 Q, R, C, GF2 = fields.Q, fields.R, fields.C, fields.GF2
 
 
+del domains
 del elements
 del fields
 del metadata
 
 
 __all__ = (
+    "Domain",
     "gf2",
     "one",
     "zero",
