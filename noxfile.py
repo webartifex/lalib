@@ -259,6 +259,7 @@ def test(session: nox.Session) -> None:
             (  # the following arguments are added:
                 "--cov-fail-under=100",
                 "--smoke-tests-only",
+                "--exitfirst",
             )
             if session.env.get("_smoke_tests_only")
             else ()
